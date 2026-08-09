@@ -134,15 +134,11 @@ export default function Hero() {
             }}
           >
             <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentFree}</span>{"\n"}
-            <span style={{ color: "var(--color-cyan-400)" }}>curl</span>{" "}
-            <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/&quot;</span>{"\n"}
-            {"  "}<span style={{ color: "var(--color-slate-400)" }}>?url=</span>
-            <span style={{ color: "var(--color-purple-400)" }}>https://news.ycombinator.com</span>{"\n\n"}
+            <span style={{ color: "var(--color-cyan-400)" }}>curl</span> <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://news.ycombinator.com&quot;</span>{"\n\n"}
             <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentPaid}</span>{"\n"}
-            <span style={{ color: "var(--color-cyan-400)" }}>curl</span>{" "}
-            <span style={{ color: "var(--color-slate-400)" }}>-H</span>{" "}
-            <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-wallet-address: 7xKX...SolanaPublicKey&quot;</span>{" \\"}{"\n"}
-            {"  "}<span style={{ color: "var(--color-indigo-400)" }}>&quot;...?url=https://example.com&amp;mode=summary&quot;</span>
+            <span style={{ color: "var(--color-cyan-400)" }}>curl</span> -H <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-wallet-address: 7xKX...SolanaPublicKey&quot;</span>{" \\\n  "}
+            -H <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-signature: 5K...Ed25519Signature&quot;</span>{" \\\n  "}
+            <span style={{ color: "var(--color-purple-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;mode=summary&quot;</span>
           </pre>
         </div>
 

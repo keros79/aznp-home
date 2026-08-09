@@ -104,24 +104,25 @@ async function fetchCleanMarkdown(targetUrl) {
   const signatureBytes = nacl.sign.detached(messageBytes, keypair.secretKey);
   const signatureBase58 = bs58.encode(signatureBytes);
 
-  const res = await fetch(
-    `https://aznp-proxy.kerberos79.workers.dev/?url=${encodeURIComponent(targetUrl)}&render=true`,
-    {
-      headers: {
-        'x-wallet-address': publicKeyBase58,
-        'x-timestamp': timestamp,
-        'x-signature': signatureBase58,
-      }
-    }
-  );
+  const endpointUrl = `https://aznp-proxy.kerberos79.workers.dev/?url=${encodeURIComponent(targetUrl)}&render=true`;
 
-  if (res.status === 402) {
-    const errorData = await res.json();
-    console.error("Insufficient credits. Deposit $20 USDC to topup:", errorData);
-  } else {
-    const markdown = await res.text();
-    console.log("Token reduction:", res.headers.get("X-Token-Reduction"));
-    return markdown;
+  const response = await fetch(endpointUrl, {
+    method: 'GET',
+    headers: {
+      'x-wallet-address': publicKeyBase58,
+      'x-timestamp': timestamp,
+      'x-signature': signatureBase58,
+    },
+  });
+
+  if (response.status === 402) {
+    const errorData = await response.json();
+    console.error("402 Payment Required: Insufficient credits. Top up needed.", errorData);
+    return null;
   }
+
+  const markdown = await response.text();
+  console.log("Token reduction:", response.headers.get("X-Token-Reduction"));
+  return markdown;
 }
 ```

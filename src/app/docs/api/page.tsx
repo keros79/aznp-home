@@ -34,13 +34,44 @@ export default function ApiReferencePage() {
     { name: "PAYMENT-REQUIRED", desc: lang === "en" ? "Top-up spec JSON returned on HTTP 402" : "HTTP 402 반환 시 충전 정보 JSON (수신 지갑 주소, 충전 단가)" },
   ];
 
-  const errorCodes = [
-    { code: "400", title: "Bad Request", desc: lang === "en" ? "Missing url param or invalid URL format" : "url 파라미터 누락 또는 유효하지 않은 URL" },
-    { code: "402", title: "Payment Required", desc: lang === "en" ? "Insufficient credits or missing Solana Wallet Ed25519 signature" : "크레딧 부족 또는 Solana Wallet Ed25519 서명 누락" },
-    { code: "429", title: "Rate Limit Exceeded", desc: lang === "en" ? "Free rate limit exceeded (top up USDC to unlock)" : "분당 요청 한도 초과 (USDC 충전 시 즉시 해제)" },
-    { code: "500", title: "Internal Error", desc: lang === "en" ? "Conversion processing error" : "변환 중 내부 오류 발생" },
-    { code: "502", title: "Bad Gateway", desc: lang === "en" ? "Failed to fetch target URL" : "대상 URL fetch 실패" },
-  ];
+  const formattedCodeExample = `import nacl from 'tweetnacl';
+import bs58 from 'bs58';
+
+const AGENT_SOLANA_PRIVATE_KEY_BASE58 = "YOUR_AGENT_SOLANA_PRIVATE_KEY";
+const secretKey = bs58.decode(AGENT_SOLANA_PRIVATE_KEY_BASE58);
+const keypair = nacl.sign.keyPair.fromSecretKey(secretKey);
+const publicKeyBase58 = bs58.encode(keypair.publicKey);
+
+async function callAZNPProxy(targetUrl) {
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const messageBytes = new TextEncoder().encode(\`x402:\${timestamp}\`);
+
+  // Generate Ed25519 detached signature
+  const signatureBytes = nacl.sign.detached(messageBytes, keypair.secretKey);
+  const signatureBase58 = bs58.encode(signatureBytes);
+
+  const endpointUrl = \`https://aznp-proxy.kerberos79.workers.dev/?url=\${encodeURIComponent(targetUrl)}&render=true\`;
+
+  const response = await fetch(endpointUrl, {
+    method: 'GET',
+    headers: {
+      'x-wallet-address': publicKeyBase58,
+      'x-timestamp': timestamp,
+      'x-signature': signatureBase58,
+    },
+  });
+
+  if (response.status === 402) {
+    const errorData = await response.json();
+    console.error("402 Payment Required: Insufficient credits. Please top up.", errorData);
+    return null;
+  }
+
+  const markdown = await response.text();
+  console.log("Token reduction:", response.headers.get("X-Token-Reduction"));
+  console.log("Clean Markdown output:", markdown.slice(0, 200));
+  return markdown;
+}`;
 
   return (
     <article>
@@ -184,42 +215,8 @@ export default function ApiReferencePage() {
         <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "1.25rem", color: "var(--color-slate-50)" }}>
           {t.codeExamplesTitle}
         </h2>
-        <div className="code-block">
-          {`import nacl from 'tweetnacl';
-import bs58 from 'bs58';
-
-const AGENT_PRIVATE_KEY_BASE58 = "YOUR_AGENT_SOLANA_PRIVATE_KEY";
-const secretKey = bs58.decode(AGENT_PRIVATE_KEY_BASE58);
-const keypair = nacl.sign.keyPair.fromSecretKey(secretKey);
-const publicKeyBase58 = bs58.encode(keypair.publicKey);
-
-async function callAZNPProxy(targetUrl) {
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const messageBytes = new TextEncoder().encode(\`x402:\${timestamp}\`);
-
-  // Generate Ed25519 signature
-  const signatureBytes = nacl.sign.detached(messageBytes, keypair.secretKey);
-  const signatureBase58 = bs58.encode(signatureBytes);
-
-  const res = await fetch(
-    \`https://aznp-proxy.kerberos79.workers.dev/?url=\${encodeURIComponent(targetUrl)}&render=true\`,
-    {
-      headers: {
-        'x-wallet-address': publicKeyBase58,
-        'x-timestamp': timestamp,
-        'x-signature': signatureBase58,
-      }
-    }
-  );
-
-  if (res.status === 402) {
-    const err = await res.json();
-    console.error("Insufficient credits! Topup needed. Wallet:", err.service_wallet);
-  } else {
-    const markdown = await res.text();
-    console.log("Success Clean Markdown:", markdown.slice(0, 200));
-  }
-}`}
+        <div className="code-block" style={{ whiteSpace: "pre-wrap", fontFamily: "var(--font-mono)", fontSize: "0.85rem", lineHeight: 1.7 }}>
+          {formattedCodeExample}
         </div>
       </section>
     </article>
