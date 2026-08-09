@@ -2,4 +2,4 @@ User-agent: *
 Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
-Sitemap: https://aznp.example.com/sitemap.xml
+Sitemap: https://aznp-home.pages.dev/sitemap.xml

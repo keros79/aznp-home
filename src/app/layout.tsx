@@ -20,7 +20,7 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aznp.example.com"),
+  metadataBase: new URL("https://aznp-home.pages.dev"),
   title: {
     default: "AZNP – Agentic Zero-Noise Proxy",
     template: "%s | AZNP",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ko_KR",
-    url: "https://aznp.example.com",
+    url: "https://aznp-home.pages.dev",
     siteName: "AZNP",
     title: "AZNP – Agentic Zero-Noise Proxy",
     description:
@@ -89,7 +89,7 @@ const jsonLd = {
       billingIncrement: "month",
     },
   ],
-  url: "https://aznp.example.com",
+  url: "https://aznp-home.pages.dev",
 };
 
 export default function RootLayout({

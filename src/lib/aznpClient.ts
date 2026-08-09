@@ -9,9 +9,12 @@ export interface ConvertOptions {
   format?: "markdown" | "json";
 }
 
+const AZNP_URL =
+  process.env.NEXT_PUBLIC_AZNP_URL ??
+  "https://aznp-proxy.kerberos79.workers.dev";
+
 /**
- * AZNP Worker API를 /api/proxy를 통해 호출합니다.
- * API Key는 서버 측에서만 처리되어 클라이언트에 노출되지 않습니다.
+ * AZNP Worker API를 직접 호출합니다. (output: 'export' 정적 내보내기 환경)
  */
 export async function convertUrl(options: ConvertOptions): Promise<AznpResult> {
   const params = new URLSearchParams();
@@ -20,10 +23,13 @@ export async function convertUrl(options: ConvertOptions): Promise<AznpResult> {
   if (options.maxTokens) params.set("max_tokens", String(options.maxTokens));
   if (options.render) params.set("render", "true");
   if (options.format) params.set("format", options.format);
-  // API Key는 서버 프록시로 전달 (헤더로)
-  if (options.apiKey) params.set("__apiKey", options.apiKey);
 
-  const res = await fetch(`/api/proxy?${params.toString()}`);
+  const headers: Record<string, string> = {};
+  if (options.apiKey) {
+    headers["X-API-Key"] = options.apiKey;
+  }
+
+  const res = await fetch(`${AZNP_URL}/?${params.toString()}`, { headers });
 
   if (!res.ok) {
     let errMsg = `HTTP ${res.status}`;

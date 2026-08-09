@@ -5,10 +5,10 @@
 AZNP는 AI 에이전트와 LLM이 웹페이지를 가져올 때 발생하는 불필요한 노이즈(광고, 네비게이션, CSS/JS)를 제거하고, 초경량·고품질 Markdown으로 변환해 반환하는 에지 프록시 서비스입니다.
 
 ## 주요 페이지
-- [소개](https://aznp.example.com/)
-- [문서](https://aznp.example.com/docs)
-- [API](https://aznp.example.com/docs/api)
-- [가격](https://aznp.example.com/pricing)
+- [소개](https://aznp-home.pages.dev/)
+- [문서](https://aznp-home.pages.dev/docs)
+- [API](https://aznp-home.pages.dev/docs/api)
+- [가격](https://aznp-home.pages.dev/pricing)
 
 ## 핵심 기능
 - 토큰 절감: 평균 75~90% 토큰 감소

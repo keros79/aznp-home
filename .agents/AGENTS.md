@@ -8,6 +8,7 @@ Next.js 15 App Router + Tailwind CSS v4 + Zustand + TanStack Query v5.
 
 ### Next.js
 - **App Router** 사용. `pages/` 디렉터리 절대 사용 금지.
+- **Static Export**: `next.config.ts`에서 `output: "export"` 설정 적용. `/out` 디렉터리로 정적 HTML 내보내기.
 - 서버 컴포넌트를 기본으로 사용. 클라이언트 상태가 필요한 경우에만 `"use client"` 지시어 추가.
 - `params`는 항상 `Promise`로 받아 `await`으로 풀어야 함 (Next.js 15 breaking change).
 - `fetch`는 Next.js 확장 fetch를 사용 (캐싱, `revalidate` 옵션 활용).
