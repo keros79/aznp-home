@@ -20,7 +20,7 @@ AZNP는 **회원가입, 로그인, API Key 관리가 전혀 없는 무키(Statel
 
 | 티어 | 최소 입금액 | 부여 크레딧 (요청 횟수) | 건당 단가 | 수수료 비중 (0.7 USDC 기준) | 지원 기능 |
 |------|------------|------------------------|-----------|--------------------------------|-----------|
-| **Free Tier** | **$0** | **15 RPM / 1,000 RPD** | **$0** | - | Tier 1~2 기본 Markdown 변환 |
+| **Free Tier** | **$0** | **15 RPM / 1,000 RPD** | **$0** | - | Tier 1~2 기본 Markdown 변환, 파일 Bypass |
 | **Pro Agent** | **$20 USDC** | **12,000회** | **$0.00166** (약 2.1원) | **3.5%** | Tier 3 JS 렌더링, Advanced Extraction, 요약, max_tokens |
 | **Enterprise** | **$100 USDC** | **80,000회** | **$0.00125** (약 1.6원) | **0.7%** (최소화) | Pro Agent 전체 + 우선 처리 큐 |
 
@@ -31,6 +31,16 @@ AZNP는 **회원가입, 로그인, API Key 관리가 전혀 없는 무키(Statel
 - `x-wallet-address`: Solana Public Key (Base58)
 - `x-timestamp`: Unix Timestamp (초 단위, 5분 이내)
 - `x-signature`: `x402:{timestamp}` 메세지에 대한 Ed25519 서명 (Base58)
+
+---
+
+## 📦 File Bypass
+
+PDF·이미지·영상 등 HTML이 아닌 파일 URL은 **변환 없이 원본 응답을 그대로 투명 프록시** 처리합니다. (Free 신용 매진 포함)
+
+- URL 확장자 기반 조기 판별: `.pdf`, `.png`, `.mp4`, `.zip`, `.docx` 등
+- Content-Type 기반 판별: `image/*`, `video/*`, `audio/*`, `application/pdf` 등
+- Bypass 응답 헤더: `X-AZNP-Bypass: true`, `X-AZNP-Cache: BYPASS`
 
 ---
 
