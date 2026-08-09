@@ -3,3 +3,6 @@ Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 Sitemap: https://aznp-home.pages.dev/sitemap.xml
+LLM-Specs: https://aznp-home.pages.dev/llms.txt
+LLM-Full-Specs: https://aznp-home.pages.dev/llms-full.txt
+OpenAPI-Spec: https://aznp-home.pages.dev/openapi.json

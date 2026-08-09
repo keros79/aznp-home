@@ -1,32 +1,32 @@
 # AZNP - Agentic Zero-Noise Proxy
 
-> AI 에이전트를 위한 초경량 Markdown 프록시 (Solana Wallet-based Stateless Micro-payment)
+> Ultra-lightweight Markdown proxy for AI Agents & LLMs with Solana Wallet-based Stateless Micropayments.
 
-AZNP는 AI 에이전트와 LLM이 웹페이지를 가져올 때 발생하는 불필요한 노이즈(광고, 네비게이션, CSS/JS)를 제거하고, 초경량·고품질 Markdown으로 변환해 반환하는 에지 프록시 서비스입니다.
-별도의 회원가입, 로그인, API Key 보관이 전혀 필요 없으며, Solana 지갑 주소 자체를 계정 ID로 사용합니다.
+AZNP strips HTML bloat, navigation, ads, scripts, and CSS from web pages, converting them into clean, high-density Markdown. It saves 75~90% LLM token costs on average. No signups, passwords, or API Key management required—your Solana Wallet (PublicKey) serves as your stateless account ID.
 
-## 주요 페이지
-- [소개](https://aznp-home.pages.dev/)
-- [문서](https://aznp-home.pages.dev/docs)
-- [API 레퍼런스 및 Solana 서명 명세](https://aznp-home.pages.dev/docs/api)
-- [Solana 요금 안내](https://aznp-home.pages.dev/pricing)
+## Core Capabilities
+- Token Reduction: 75~90% average LLM token savings (up to 95% with Advanced Extraction)
+- 3-Tier Cascading Engine: Cloudflare Native → Self Extraction → Tier 3 Browser Rendering (JS)
+- Multi-Tier Caching: Cache API + KV saving 70~90% CPU on repeated requests
+- Stateless Authentication: Solana Ed25519 wallet signatures (`x-wallet-address`, `x-signature`, `x-timestamp`)
 
-## 핵심 기능
-- 토큰 절감: 평균 75~90% 토큰 감소 (Advanced Extraction 시 추가 15~30%)
-- 3-Tier Cascading: Cloudflare Native → 자체 변환 → JS 렌더링
-- 다층 캐시: Cache API + KV로 CPU 70~90% 절약
-- Stateless Auth: 회원가입 / 로그인 / API Key 관리 제로 (Solana Ed25519 서명)
-- 요금 체계:
-  - Free Tier: $0 (15 RPM / 1,000 RPD)
-  - Pro Agent: $20 USDC 충전 (12,000회 / 건당 $0.00166)
-  - Enterprise: $100 USDC 충전 (80,000회 / 건당 $0.00125)
+## Pricing & Deposit Options (USDC on Solana)
+- Free Tier: $0 / month (15 RPM / 1,000 RPD basic conversion, no auth needed)
+- Pro Agent: $20 USDC deposit = 12,000 request credits ($0.00166 / req)
+- Enterprise: $100 USDC deposit = 80,000 request credits ($0.00125 / req)
 
-## 결제 및 충전 정보
-- Solana 수신 지갑 주소: GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E
-- USDC Mint Address: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
-- 충전 엔드포인트: POST /v1/topup (body: { wallet, tx_hash })
+## Official Receiver Wallet & Topup API
+- Solana Service Receiver Wallet: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
+- USDC Mint Address: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
+- Topup Endpoint: `POST https://aznp-proxy.kerberos79.workers.dev/v1/topup` (Body: `{"wallet": "<SOL_PUBLIC_KEY>", "tx_hash": "<SOL_TX_HASH>"}`)
 
-## API 엔드포인트
-- Base URL: https://aznp-proxy.kerberos79.workers.dev
-- 요청: GET /?url={target_url}
-- 서명 인증 헤더: x-wallet-address, x-timestamp, x-signature
+## API Endpoints
+- Primary Conversion: `GET https://aznp-proxy.kerberos79.workers.dev/?url={target_url}`
+- Parameters: `url` (required), `mode` (auto | summary), `max_tokens` (number), `render` (true | false), `format` (markdown | json)
+- Signature Headers: `x-wallet-address`, `x-timestamp`, `x-signature`
+
+## Machine-Readable Specifications
+- Full Documentation: https://aznp-home.pages.dev/llms-full.txt
+- OpenAPI 3.0 Specification: https://aznp-home.pages.dev/openapi.json
+- API Reference: https://aznp-home.pages.dev/docs/api
+- Pricing Details: https://aznp-home.pages.dev/pricing

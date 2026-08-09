@@ -1,0 +1,132 @@
+# AZNP (Agentic Zero-Noise Proxy) Full Specification for AI Agents
+
+> Complete machine-readable API reference, authentication specifications, payment details, and integration code for autonomous LLM Agents.
+
+---
+
+## 1. Executive Summary
+
+AZNP is an edge proxy designed explicitly for LLMs, AI Autonomous Agents, and RAG pipelines. When agents fetch web pages for research or context retrieval, raw HTML contains up to 90% bloat (ads, navigation, footers, scripts, tracking pixels). AZNP converts web pages into high-density, clean Markdown, saving 75~90% in LLM token consumption.
+
+AZNP operates on a **Stateless, No-Key Architecture**. There are no accounts, passwords, or stored API keys to manage or leak. Authentication is performed via Solana Ed25519 digital signatures.
+
+---
+
+## 2. API Endpoints
+
+### 2.1 Web Page to Markdown Conversion (`GET /`)
+Base URL: `https://aznp-proxy.kerberos79.workers.dev/`
+
+#### Query Parameters
+- `url` (string, required): The target web URL to fetch and convert (e.g. `https://example.com/article`).
+- `mode` (string, optional): `auto` (default) for standard extraction, or `summary` for AI-condensed key takeaway extraction.
+- `max_tokens` (number, optional): Maximum token budget for the returned Markdown content.
+- `render` (boolean, optional): Set `true` to force Tier 3 Browser Rendering for dynamic JavaScript single-page apps.
+- `format` (string, optional): `markdown` (default) or `json` for structured payload including metadata.
+- `fresh` (number, optional): Set `1` to bypass edge cache and force fresh web fetching.
+- `images` (number, optional): Set `0` to strip image references and alt texts to further reduce tokens.
+
+#### Authentication Headers (Required for Tier 3 / Summary / Paid Requests)
+- `x-wallet-address`: Solana Public Key (Base58 encoded)
+- `x-timestamp`: Unix timestamp in seconds (must be within 5 minutes of current server time)
+- `x-signature`: Base58 Ed25519 signature of the message string `x402:{timestamp}`
+
+---
+
+### 2.2 Credit Top-Up Endpoint (`POST /v1/topup`)
+Base URL: `https://aznp-proxy.kerberos79.workers.dev/v1/topup`
+
+Submit a Solana transaction hash after transferring USDC to top up request credits for your wallet address.
+
+#### Request Body (JSON)
+```json
+{
+  "wallet": "7xKX...SolanaPublicKeyBase58",
+  "tx_hash": "5K...SolanaTransactionHashBase58"
+}
+```
+
+#### Response Body (200 OK)
+```json
+{
+  "success": true,
+  "wallet": "7xKX...SolanaPublicKeyBase58",
+  "deposited_usdc": 20.0,
+  "added_credits": 12000,
+  "total_allowed_requests": 12000
+}
+```
+
+---
+
+## 3. Pricing & Rates (Solana USDC)
+
+AZNP uses a prepaid credit balance linked directly to your Solana Wallet Address.
+
+| Tier | Deposit Amount | Credits (Requests) | Unit Price | Gas Ratio (0.7 USDC basis) | Token Savings Value |
+|------|----------------|-------------------|------------|---------------------------|----------------------|
+| **Free Tier** | **$0** | 15 RPM / 1,000 RPD | **$0** | N/A | Basic conversion |
+| **Pro Agent** | **$20 USDC** | **12,000 requests** | **$0.00166** (~2.1 KRW) | **3.5%** | ~$840 in LLM token value |
+| **Enterprise** | **$100 USDC** | **80,000 requests** | **$0.00125** (~1.6 KRW) | **0.7%** | ~$5,600 in LLM token value |
+
+### Solana Deposit Specification
+- **Receiver Wallet**: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
+- **USDC Mint Address**: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
+- **Minimum Deposit**: $20 USDC (Deposits below $20 USDC will be rejected)
+
+---
+
+## 4. Response Headers
+
+Every AZNP API response includes analytical and telemetry headers:
+
+- `X-AZNP-Plan`: Execution tier (`free`, `pro`, `enterprise`)
+- `X-AZNP-Source`: Conversion engine source (`cloudflare-native`, `aznp-self`, `browser-rendering`, `cache`, `kv`)
+- `X-AZNP-Cache`: Cache status (`HIT`, `MISS`)
+- `X-Token-Reduction`: Estimated token savings percentage (e.g. `84%`)
+- `X-Markdown-Tokens`: Estimated token count of the returned Markdown payload
+- `X-RateLimit-Remaining`: Remaining request credits for the wallet
+- `PAYMENT-REQUIRED`: Present when HTTP 402 is returned, specifying top-up wallet and pricing tiers
+
+---
+
+## 5. Agent Code Example (Node.js / TypeScript)
+
+```javascript
+import nacl from 'tweetnacl';
+import bs58 from 'bs58';
+
+const AGENT_SOLANA_PRIVATE_KEY_BASE58 = "YOUR_AGENT_SOLANA_PRIVATE_KEY_BASE58";
+const secretKey = bs58.decode(AGENT_SOLANA_PRIVATE_KEY_BASE58);
+const keypair = nacl.sign.keyPair.fromSecretKey(secretKey);
+const publicKeyBase58 = bs58.encode(keypair.publicKey);
+
+async function fetchCleanMarkdown(targetUrl) {
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const messageBytes = new TextEncoder().encode(`x402:${timestamp}`);
+
+  // Create Ed25519 detached signature
+  const signatureBytes = nacl.sign.detached(messageBytes, keypair.secretKey);
+  const signatureBase58 = bs58.encode(signatureBytes);
+
+  const res = await fetch(
+    `https://aznp-proxy.kerberos79.workers.dev/?url=${encodeURIComponent(targetUrl)}&render=true`,
+    {
+      headers: {
+        'x-wallet-address': publicKeyBase58,
+        'x-timestamp': timestamp,
+        'x-signature': signatureBase58,
+      }
+    }
+  );
+
+  if (res.status === 402) {
+    const errorData = await res.json();
+    console.error("Insufficient credits. Deposit $20 USDC to receiver wallet:", errorData.service_wallet);
+  } else {
+    const markdown = await res.text();
+    console.log("Token reduction:", res.headers.get("X-Token-Reduction"));
+    return markdown;
+  }
+}
+```

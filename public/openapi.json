@@ -1,0 +1,194 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AZNP - Agentic Zero-Noise Proxy API",
+    "description": "Ultra-lightweight Markdown proxy for AI Agents & LLMs with Solana Wallet-based Stateless Micropayments ($0.00166 / req).",
+    "version": "2.1.0",
+    "contact": {
+      "name": "AZNP Support",
+      "url": "https://aznp-home.pages.dev/docs"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://aznp-proxy.kerberos79.workers.dev",
+      "description": "Production Cloudflare Workers Edge API"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Convert web URL to clean, ultra-lightweight Markdown",
+        "description": "Strips ads, navigation, CSS, and JS bloat from web pages into high-density Markdown context. Free tier or Solana Wallet Ed25519 authenticated.",
+        "operationId": "convertUrlToMarkdown",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "description": "The target web page URL to convert to Markdown",
+            "schema": {
+              "type": "string",
+              "example": "https://news.ycombinator.com"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "description": "Extraction mode: 'auto' for standard, 'summary' for AI key takeaway condensation",
+            "schema": {
+              "type": "string",
+              "enum": ["auto", "summary"],
+              "default": "auto"
+            }
+          },
+          {
+            "name": "max_tokens",
+            "in": "query",
+            "required": false,
+            "description": "Maximum token limit for the returned Markdown content",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "render",
+            "in": "query",
+            "required": false,
+            "description": "Set true to force Tier 3 Browser Rendering for dynamic JS single page apps",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Return payload format: 'markdown' or 'json'",
+            "schema": {
+              "type": "string",
+              "enum": ["markdown", "json"],
+              "default": "markdown"
+            }
+          },
+          {
+            "name": "x-wallet-address",
+            "in": "header",
+            "required": false,
+            "description": "Solana Public Key (Base58) for stateless account authentication",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-timestamp",
+            "in": "header",
+            "required": false,
+            "description": "Unix timestamp in seconds for signature verification",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-signature",
+            "in": "header",
+            "required": false,
+            "description": "Base58 Ed25519 signature of the message string 'x402:{timestamp}'",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully converted to Markdown",
+            "headers": {
+              "X-AZNP-Plan": {
+                "schema": { "type": "string" },
+                "description": "free | pro | enterprise"
+              },
+              "X-AZNP-Source": {
+                "schema": { "type": "string" },
+                "description": "cloudflare-native | aznp-self | browser-rendering | cache | kv"
+              },
+              "X-Token-Reduction": {
+                "schema": { "type": "string" },
+                "description": "Estimated token reduction percentage (e.g. 84%)"
+              }
+            },
+            "content": {
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment Required - Insufficient credits or missing Solana Wallet signature",
+            "headers": {
+              "PAYMENT-REQUIRED": {
+                "schema": { "type": "string" },
+                "description": "JSON string specifying receiver wallet and deposit tiers"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/topup": {
+      "post": {
+        "summary": "Top up request credits using Solana USDC transaction hash",
+        "description": "Submit a Solana transaction hash after sending $20 USDC or more to receiver wallet GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E",
+        "operationId": "topupCredits",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["wallet", "tx_hash"],
+                "properties": {
+                  "wallet": {
+                    "type": "string",
+                    "description": "Solana Public Key (Base58)"
+                  },
+                  "tx_hash": {
+                    "type": "string",
+                    "description": "Solana Transaction Hash (Base58)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credits successfully toped up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "wallet": { "type": "string" },
+                    "deposited_usdc": { "type": "number" },
+                    "added_credits": { "type": "integer" },
+                    "total_allowed_requests": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
