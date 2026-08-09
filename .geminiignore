@@ -1,0 +1,27 @@
+# Build outputs
+.next/
+out/
+dist/
+
+# Dependencies
+node_modules/
+
+# Lock files (large, rarely useful for AI context)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files (sensitive)
+.env
+.env.local
+.env.*.local
+
+# OS / Editor
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Next.js generated
+next-env.d.ts

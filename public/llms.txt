@@ -1,0 +1,22 @@
+# AZNP - Agentic Zero-Noise Proxy
+
+> AI 에이전트를 위한 초경량 Markdown 프록시
+
+AZNP는 AI 에이전트와 LLM이 웹페이지를 가져올 때 발생하는 불필요한 노이즈(광고, 네비게이션, CSS/JS)를 제거하고, 초경량·고품질 Markdown으로 변환해 반환하는 에지 프록시 서비스입니다.
+
+## 주요 페이지
+- [소개](https://aznp.example.com/)
+- [문서](https://aznp.example.com/docs)
+- [API](https://aznp.example.com/docs/api)
+- [가격](https://aznp.example.com/pricing)
+
+## 핵심 기능
+- 토큰 절감: 평균 75~90% 토큰 감소
+- 3-Tier Cascading: Cloudflare Native → 자체 변환 → JS 렌더링
+- 다층 캐시: Cache API + KV로 CPU 70~90% 절약
+- Free ($0) / Pro ($19/월) / Team ($49/월) 플랜
+
+## API 엔드포인트
+- Base URL: https://aznp-proxy.kerberos79.workers.dev
+- 요청: GET /?url={target_url}
+- Pro 인증: X-API-Key 헤더
