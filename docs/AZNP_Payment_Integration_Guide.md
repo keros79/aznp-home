@@ -1,415 +1,178 @@
-# AZNP 결제 연동 가이드 (Next.js)
+# AZNP 결제 및 인증 연동 가이드
 
-**버전**: 1.0  
+**버전**: 2.0  
 **작성일**: 2026년 8월 9일  
-**목표**: 사람 사용자(Lemon Squeezy) + AI 에이전트(x402) 모두 지원
+**핵심 지원**: Solana Wallet-based Stateless Micro-payment (API Key / 회원가입 필요 없음) + Lemon Squeezy (사람용 구독)
 
 ---
 
 ## 1. 개요
 
-AZNP Pro 결제는 두 가지 경로를 지원합니다.
+AZNP는 AI 에이전트와 사용자를 위해 두 가지 지불 및 인증 경로를 제공합니다.
 
-| 경로 | 대상 | 방식 | 특징 |
-|------|------|------|------|
-| **A. Lemon Squeezy** | 사람 사용자 | 월 구독 ($19) | 카드 결제, API Key 발급 |
-| **B. x402** | AI 에이전트 | 요청당 / 크레딧 | 계정·API Key 없이 USDC 결제 |
-
-이 문서는 **Next.js 홈페이지 + Cloudflare Worker API** 기준으로 두 경로를 모두 구현하는 방법을 정리합니다.
+| 경로 | 대상 | 인증 방식 | 요금 체계 |
+|------|------|----------|-----------|
+| **A. Solana Wallet Auth (권장)** | AI 에이전트 / 개발자 | Solana Ed25519 서명 (`x-wallet-address`) | $20 USDC 이상 충전 크레딧 차감 |
+| **B. Lemon Squeezy** | 사람 사용자 | API Key (`X-API-Key`) | 월 구독 ($19/mo) |
 
 ---
 
-## 2. 전체 아키텍처
+## 2. 요금 체계 (Solana USDC)
+
+AI 에이전트 및 무키(Stateless) 이용자를 위한 충전 단위 및 단가 구조입니다.
+
+| 티어 | 최소 충전액 | 부여 크레딧 (요청 횟수) | 건당 단가 | 수수료 비중 (0.7 USDC 출금 기준) | 아끼는 LLM 토큰 가치 |
+|------|------------|------------------------|-----------|--------------------------------|----------------------|
+| **Pro Agent** | **$20 USDC** | **12,000회** | **$0.00166** (약 2.1원) | **3.5%** | 약 $840 (약 110만원 상당) |
+| **Enterprise** | **$100 USDC** | **80,000회** | **$0.00125** (약 1.6원) | **0.7%** (수수료 극소화) | 약 $5,600 (약 730만원 상당) |
+
+- **최소 충전 요건**: **$20 USDC** ($20 미만 입금 시 충전 거부)
+- **수신 서비스 지갑 주소 (Solana)**: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
+- **USDC Mint Address**: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
+
+---
+
+## 3. Solana Wallet-based Stateless Micro-payment 연동
+
+별도의 회원가입이나 API Key 보관 없이, **솔라나 지갑 주소(PublicKey)** 자체를 계정 ID로 사용합니다.
 
 ```
-[사람 사용자]
-     │
-     │  홈페이지 "Upgrade to Pro" 클릭
-     ▼
-Lemon Squeezy Checkout
-     │
-     │  Webhook (결제 성공)
-     ▼
-Next.js API Route  →  KV에 API Key 활성화
-     │
-     ▼
-사용자가 X-API-Key로 AZNP 호출
-
-
-[AI 에이전트]
-     │
-     │  API 호출 (API Key 없음)
-     ▼
-Cloudflare Worker
-     │
-     ├─ 잔액/크레딧 있음? → 결과 반환
-     │
-     └─ 없음? → 402 Payment Required (x402)
-              │
-              ▼
-         에이전트 지갑이 USDC 결제
-              │
-              ▼
-         결제 확인 후 Markdown 반환
+┌──────────────┐                 ┌───────────────────────┐                 ┌────────────────────────┐
+│  AI Agent    │ ──(1. Deposit)─>│ Solana Blockchain     │                 │ Cloudflare Workers API │
+│ (Wallet/Key) │                 │ (USDC Transfer)       │                 │ + Cloudflare KV        │
+└──────────────┘                 └───────────────────────┘                 └────────────────────────┘
+       │                                     │                                         │
+       │─── (2. POST /v1/topup) ────────────┼────────────────────────────────────────>│
+       │    Body: { wallet, tx_hash }        │                                         │
+       │                                     │<─── (3. Verify Transaction via RPC) ────│
+       │                                     │     Check Receiver, Token, Amount       │
+       │                                                                               │
+       │─── (4. GET /?url=...) ────────────────────────────────────────────────────────>│
+       │    Headers:                                                                   │
+       │      x-wallet-address: <SOL_WALLET>                                           │
+       │      x-signature: <Ed25519_SIG>                                               │
+       │      x-timestamp: <UNIX_TIMESTAMP>                                            │
+       │                                                                               │ (5. Verify Ed25519)
+       │                                                                               │ (6. KV INCR/Check)
+       │<─── (7. 200 OK / 402 Payment Required) ────────────────────────────────────────│
 ```
 
 ---
 
-## 3. Lemon Squeezy 연동 (사람용)
+### 3.1 충전 API (`POST /v1/topup`)
 
-### 3.1 사전 준비
+USDC 송금 후 트랜잭션 해시(`tx_hash`)와 본인의 지갑 주소(`wallet`)를 제출하여 크레딧을 충전합니다.
 
-1. [Lemon Squeezy](https://lemonsqueezy.com) 가입 (한국 가능)
-2. Store 생성
-3. Product 생성
-   - Name: `AZNP Pro`
-   - Price: `$19 / month` (Subscription)
-4. Webhook 설정
-   - URL: `https://your-domain.com/api/webhooks/lemonsqueezy`
-   - Events: `subscription_created`, `subscription_updated`, `subscription_cancelled`, `subscription_expired`
-
-### 3.2 환경 변수 (.env.local)
-
-```env
-LEMON_SQUEEZY_API_KEY=your_api_key
-LEMON_SQUEEZY_STORE_ID=your_store_id
-LEMON_SQUEEZY_WEBHOOK_SECRET=your_webhook_secret
-LEMON_SQUEEZY_VARIANT_ID=your_variant_id   # Pro 상품 Variant ID
+#### **요청 (Request)**
+```bash
+curl -X POST "https://aznp-proxy.kerberos79.workers.dev/v1/topup" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "7xKX...AgentSolanaPublicKey",
+    "tx_hash": "5K...SolanaTransactionHash"
+  }'
 ```
 
-### 3.3 체크아웃 버튼 (프론트엔드)
-
-```tsx
-// components/UpgradeButton.tsx
-"use client";
-
-export default function UpgradeButton() {
-  const checkoutUrl = `https://yourstore.lemonsqueezy.com/checkout/buy/${process.env.NEXT_PUBLIC_LEMON_VARIANT_ID}?checkout[email]=`;
-
-  // 또는 Overlay 방식
-  const handleClick = () => {
-    // Lemon.js 사용 시
-    window.createLemonSqueezy?.();
-    // 또는 단순 링크로 이동
-    window.location.href = checkoutUrl;
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700"
-    >
-      Upgrade to Pro — $19/mo
-    </button>
-  );
-}
-```
-
-### 3.4 Webhook 처리 (Next.js API Route)
-
-```ts
-// app/api/webhooks/lemonsqueezy/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
-
-const WEBHOOK_SECRET = process.env.LEMON_SQUEEZY_WEBHOOK_SECRET!;
-
-function verifySignature(rawBody: string, signature: string): boolean {
-  const hmac = crypto.createHmac("sha256", WEBHOOK_SECRET);
-  const digest = hmac.update(rawBody).digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
-}
-
-export async function POST(req: NextRequest) {
-  const rawBody = await req.text();
-  const signature = req.headers.get("x-signature") || "";
-
-  if (!verifySignature(rawBody, signature)) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-  }
-
-  const payload = JSON.parse(rawBody);
-  const eventName = payload.meta?.event_name;
-  const data = payload.data;
-  const attrs = data?.attributes;
-
-  // 사용자 식별 (이메일 또는 custom data)
-  const email = attrs?.user_email;
-  const subscriptionId = data?.id;
-  const status = attrs?.status; // active, cancelled, expired 등
-
-  // Cloudflare KV 또는 D1에 반영
-  // 실제 구현 시 Cloudflare API 또는 별도 DB 사용
-  if (eventName === "subscription_created" || eventName === "subscription_updated") {
-    if (status === "active") {
-      await activateProUser({
-        email,
-        subscriptionId,
-        plan: "pro",
-        status: "active",
-      });
-    }
-  }
-
-  if (eventName === "subscription_cancelled" || eventName === "subscription_expired") {
-    await deactivateProUser({ email, subscriptionId });
-  }
-
-  return NextResponse.json({ received: true });
-}
-
-// 예시: KV에 API Key 저장/활성화
-async function activateProUser(user: {
-  email: string;
-  subscriptionId: string;
-  plan: string;
-  status: string;
-}) {
-  // 1. API Key 생성
-  const apiKey = `aznp_pro_${crypto.randomBytes(16).toString("hex")}`;
-
-  // 2. Cloudflare KV에 저장 (Workers API 또는 바인딩 사용)
-  // await env.API_KEYS.put(apiKey, JSON.stringify({
-  //   email: user.email,
-  //   subscriptionId: user.subscriptionId,
-  //   plan: "pro",
-  //   status: "active",
-  //   createdAt: new Date().toISOString(),
-  // }));
-
-  // 3. 사용자에게 이메일로 API Key 발송 (Resend, SendGrid 등)
-  console.log(`Pro activated for ${user.email}, key: ${apiKey}`);
-}
-
-async function deactivateProUser(user: { email: string; subscriptionId: string }) {
-  // KV에서 해당 subscription의 Key를 inactive로 변경
-  console.log(`Pro deactivated for ${user.email}`);
-}
-```
-
-### 3.5 사용자에게 API Key 보여주는 페이지
-
-```tsx
-// app/dashboard/page.tsx (로그인 후)
-export default function DashboardPage() {
-  // 세션/이메일 기준으로 KV에서 API Key 조회
-  const apiKey = "aznp_pro_xxxxx"; // 실제로는 서버에서 조회
-
-  return (
-    <div>
-      <h1>Your Pro API Key</h1>
-      <code className="bg-gray-100 p-4 rounded block">{apiKey}</code>
-      <p className="text-sm text-gray-500 mt-2">
-        Header: <code>X-API-Key: {apiKey}</code>
-      </p>
-    </div>
-  );
+#### **성공 응답 (200 OK)**
+```json
+{
+  "success": true,
+  "wallet": "7xKX...AgentSolanaPublicKey",
+  "deposited_usdc": 20.0,
+  "added_credits": 12000,
+  "total_allowed_requests": 12000
 }
 ```
 
 ---
 
-## 4. x402 연동 (AI 에이전트용)
+### 3.2 서명 인증 요청 (`GET /?url=...`)
 
-### 4.1 개념
+에이전트는 API 호출 시 `x402:{timestamp}` 메시지를 본인의 Solana 비밀키로 서명하여 헤더로 전달합니다.
 
-에이전트가 API Key 없이 요청하면:
+#### **요청 헤더 Specification**
+- `x-wallet-address`: Solana Public Key (Base58)
+- `x-timestamp`: Unix Timestamp (초 단위, 5분 이내)
+- `x-signature`: `x402:{timestamp}` 메시지에 대한 Ed25519 서명 (Base58)
 
-1. Worker가 `402 Payment Required` 반환
-2. 응답 헤더에 결제 정보 포함 (금액, 토큰, 주소, 네트워크)
-3. 에이전트 지갑이 USDC로 결제
-4. 결제 증명과 함께 재요청
-5. Worker가 검증 후 결과 반환
+#### **curl 요청 예시**
+```bash
+curl -X GET "https://aznp-proxy.kerberos79.workers.dev/?url=https://news.ycombinator.com&render=true" \
+  -H "x-wallet-address: 7xKX...AgentSolanaPublicKey" \
+  -H "x-timestamp: 1786249000" \
+  -H "x-signature: 3mZ...Ed25519SignatureBase58"
+```
 
-### 4.2 Cloudflare Worker에서 x402 처리 (핵심)
+---
 
-```js
-// worker.js 일부 (x402 지원 추가)
+### 3.3 잔액 부족 / 미결제 응답 (`402 Payment Required`)
 
-const X402_PRICE_USDC = "0.01"; // 요청당 가격 (예시)
-const MERCHANT_ADDRESS = "0xYourUSDCAddress"; // USDC 받을 주소
-const NETWORK = "base"; // 또는 solana 등
+크레딧이 부족하거나 서명 인증이 없을 때 402 응답과 `PAYMENT-REQUIRED` 헤더를 반환합니다.
 
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    const targetUrl = url.searchParams.get("url");
-    const apiKey = request.headers.get("X-API-Key");
-
-    // 1. API Key가 있으면 → 기존 Pro 로직
-    if (apiKey) {
-      const plan = await getPlan(request, env);
-      if (plan.plan === "pro") {
-        return handleNormalRequest(request, env, ctx, plan);
-      }
-    }
-
-    // 2. x402 결제 헤더가 있는지 확인
-    const paymentSignature = request.headers.get("PAYMENT-SIGNATURE");
-    // 또는 x402 표준에 맞는 헤더명 사용
-
-    if (paymentSignature) {
-      // 결제 검증
-      const isValid = await verifyX402Payment(paymentSignature, env);
-      if (isValid) {
-        return handleNormalRequest(request, env, ctx, { plan: "x402" });
-      }
-    }
-
-    // 3. 결제 없음 → 402 반환
-    return new Response(
-      JSON.stringify({
-        error: "Payment Required",
-        message: "This endpoint requires payment via x402 or a Pro API Key",
-      }),
-      {
-        status: 402,
-        headers: {
-          "Content-Type": "application/json",
-          // x402 표준 헤더 (실제 스펙에 맞게 조정)
-          "PAYMENT-REQUIRED": JSON.stringify({
-            amount: X402_PRICE_USDC,
-            currency: "USDC",
-            network: NETWORK,
-            payTo: MERCHANT_ADDRESS,
-            description: "AZNP Markdown conversion",
-          }),
-          "Access-Control-Expose-Headers": "PAYMENT-REQUIRED",
-        },
-      }
-    );
+```json
+{
+  "error": "Payment Required",
+  "message": "Insufficient credits or missing Solana Wallet authentication signature.",
+  "service_wallet": "GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E",
+  "network": "solana",
+  "currency": "USDC",
+  "min_deposit": "$20 USDC",
+  "tiers": {
+    "Pro Agent": "$20 USDC = 12,000 requests ($0.00166/req)",
+    "Enterprise": "$100 USDC = 80,000 requests ($0.00125/req)"
   },
-};
-
-async function verifyX402Payment(signature, env) {
-  // 실제 구현:
-  // 1. facilitator 서비스 호출 또는 온체인 검증
-  // 2. Cloudflare Monetization Gateway / Coinbase facilitator 사용 권장
-  // 3. 금액, 수신 주소, 네트워크 확인
-  return true; // placeholder
+  "topup_endpoint": "POST /v1/topup"
 }
 ```
 
-### 4.3 Cloudflare Monetization Gateway 활용 (권장)
+---
 
-Cloudflare가 2026년에 발표한 **Monetization Gateway**를 사용하면 x402 검증을 직접 구현하지 않아도 됩니다.
+## 4. AI 에이전트 구현 예시 (Node.js)
 
-- Worker 앞에서 Gateway가 결제 검증
-- 결제 완료된 요청만 Worker로 전달
-- 설정은 Cloudflare Dashboard에서 진행
+```javascript
+import nacl from 'tweetnacl';
+import bs58 from 'bs58';
 
-문서: [Cloudflare Monetization Gateway](https://blog.cloudflare.com/monetization-gateway/)
+const AGENT_PRIVATE_KEY_BASE58 = "YOUR_AGENT_PRIVATE_KEY_BASE58";
+const secretKey = bs58.decode(AGENT_PRIVATE_KEY_BASE58);
+// nacl keypair from secret key (64 bytes)
+const keypair = nacl.sign.keyPair.fromSecretKey(secretKey);
+const publicKeyBase58 = bs58.encode(keypair.publicKey);
 
-### 4.4 에이전트 쪽 사용 예시 (참고)
+async function callAZNPProxy(targetUrl) {
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const message = `x402:${timestamp}`;
+  const messageBytes = new TextEncoder().encode(message);
 
-```js
-// 에이전트 코드 예시 (x402 클라이언트)
-import { x402fetch } from "@x402/fetch"; // 예시 SDK
+  // 메시지 Ed25519 서명
+  const signatureBytes = nacl.sign.detached(messageBytes, keypair.secretKey);
+  const signatureBase58 = bs58.encode(signatureBytes);
 
-const response = await x402fetch(
-  "https://aznp.example.com/?url=https://example.com",
-  {
-    wallet: agentWallet, // USDC 잔액이 있는 지갑
-    maxAmount: "0.05",   // 최대 지불 한도
+  const res = await fetch(`https://aznp-proxy.kerberos79.workers.dev/?url=${encodeURIComponent(targetUrl)}&render=true`, {
+    headers: {
+      'x-wallet-address': publicKeyBase58,
+      'x-signature': signatureBase58,
+      'x-timestamp': timestamp,
+    }
+  });
+
+  if (res.status === 402) {
+    const errorData = await res.json();
+    console.error("잔액 부족! 충전 필요. 수신 지갑:", errorData.service_wallet);
+    // 에이전트가 20 USDC 전송 후 /v1/topup 호출
+  } else {
+    const markdown = await res.text();
+    console.log("변환 성공 Clean Markdown:", markdown.slice(0, 200));
   }
-);
-
-const markdown = await response.text();
-```
-
----
-
-## 5. Next.js에서 두 경로를 함께 노출하는 UI
-
-```tsx
-// app/pricing/page.tsx
-export default function PricingPage() {
-  return (
-    <div className="max-w-4xl mx-auto py-16 px-4">
-      <h1 className="text-3xl font-bold mb-8">Pricing</h1>
-
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* 사람용 */}
-        <div className="border rounded-xl p-6">
-          <h2 className="text-xl font-semibold">Pro (Human)</h2>
-          <p className="text-3xl font-bold mt-2">$19<span className="text-base font-normal">/mo</span></p>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>✓ API Key 발급</li>
-            <li>✓ 높은 Rate Limit</li>
-            <li>✓ JS Rendering, Summary 등</li>
-            <li>✓ 월간 토큰 절감 리포트</li>
-          </ul>
-          <UpgradeButton />
-        </div>
-
-        {/* 에이전트용 */}
-        <div className="border rounded-xl p-6">
-          <h2 className="text-xl font-semibold">Pay-per-request (Agents)</h2>
-          <p className="text-3xl font-bold mt-2">~$0.01<span className="text-base font-normal">/req</span></p>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>✓ API Key 불필요</li>
-            <li>✓ x402 (USDC) 결제</li>
-            <li>✓ 계정 생성 없이 바로 사용</li>
-            <li>✓ 에이전트 자동화에 최적</li>
-          </ul>
-          <p className="mt-4 text-sm text-gray-500">
-            에이전트는 <code>Accept</code> / x402 헤더로 자동 결제합니다.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 }
 ```
 
 ---
 
-## 6. 구현 우선순위 체크리스트
+## 5. Lemon Squeezy 연동 (사람 사용자용)
 
-### Phase 1 — 사람 결제 (바로 가능)
-- [ ] Lemon Squeezy 가입 및 상품 생성
-- [ ] 체크아웃 버튼 홈페이지에 배치
-- [ ] Webhook API Route 작성
-- [ ] 결제 성공 시 API Key 발급 + KV 저장
-- [ ] 대시보드에서 Key 확인 가능하게
-
-### Phase 2 — 에이전트 결제
-- [ ] Cloudflare Monetization Gateway 또는 x402 facilitator 연동
-- [ ] Worker에 402 응답 로직 추가
-- [ ] 결제 검증 후 결과 반환 테스트
-- [ ] 문서에 에이전트용 사용법 추가
-
-### Phase 3 — 통합
-- [ ] Pricing 페이지에 두 옵션 모두 표시
-- [ ] 사용량/수익 대시보드 (사람 구독 + x402 수익)
-- [ ] Rate Limit / 남용 방지 보완
-
----
-
-## 7. 보안 및 주의사항
-
-1. **Webhook 서명 검증** 필수 (Lemon Squeezy)
-2. **API Key**는 절대 프론트엔드에 하드코딩하지 말 것
-3. **x402** 결제 검증은 가급적 Cloudflare/Coinbase facilitator에 맡길 것
-4. 한국 판매자: Lemon Squeezy 정산은 Payoneer/PayPal 사용
-5. 국내 소득세·부가세 신고는 본인 책임
-
----
-
-## 8. 참고 링크
-
-- [Lemon Squeezy Docs](https://docs.lemonsqueezy.com)
-- [Cloudflare Monetization Gateway](https://blog.cloudflare.com/monetization-gateway/)
-- [x402 Protocol](https://developers.cloudflare.com/agents/tools/payments/x402/)
-- [Cloudflare Agents Payments](https://developers.cloudflare.com/agents/tools/payments/)
+사람 사용자의 경우 기존 문서를 참고하여 홈페이지에서 $19/월 결제 후 `X-API-Key`를 발급받아 사용할 수 있습니다.
 
 ---
 
 **문서 끝**
-
-이 가이드를 따라가면  
-- 사람은 Lemon Squeezy로 편하게 구독하고  
-- AI 에이전트는 x402로 계정 없이 바로 결제  
-
-하는 구조가 완성됩니다.
-`}

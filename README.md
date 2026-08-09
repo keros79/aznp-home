@@ -13,34 +13,25 @@ Next.js 15 App Router + Tailwind CSS v4 + Zustand + TanStack Query로 구축되�
 
 ---
 
-## 💳 과금 및 x402 에이전트 결제 모델
+## 💳 과금 및 Solana Wallet Stateless 인증 모델 (v2.0)
 
-AZNP는 **회원가입, 로그인, API Key 관리가 전혀 없는 Zero-Friction 결제 아키텍처**를 지향합니다.
+AZNP는 **회원가입, 로그인, API Key 관리가 전혀 없는 무키(Stateless) 소액 충전 결제 아키텍처**를 지향합니다.
 
-| 플랜 | 가격 | 회원가입 / Key | 지원 기능 |
-|------|------|----------------|-----------|
-| **Free Tier** | **$0** | **불필요** | Tier 1~2 기본 Markdown 변환 (15 RPM / 1,000 RPD) |
-| **Pay-per-request** | **~$0.01 / 건 (USDC)** | **불필요** | Tier 3 JS 렌더링, Advanced Extraction, 요약(`mode=summary`), max_tokens 제한 |
+| 티어 | 최소 입금액 | 부여 크레딧 (요청 횟수) | 건당 단가 | 수수료 비중 (0.7 USDC 기준) | 지원 기능 |
+|------|------------|------------------------|-----------|--------------------------------|-----------|
+| **Free Tier** | **$0** | **15 RPM / 1,000 RPD** | **$0** | - | Tier 1~2 기본 Markdown 변환 |
+| **Pro Agent** | **$20 USDC** | **12,000회** | **$0.00166** (약 2.1원) | **3.5%** | Tier 3 JS 렌더링, Advanced Extraction, 요약, max_tokens |
+| **Enterprise** | **$100 USDC** | **80,000회** | **$0.00125** (약 1.6원) | **0.7%** (최소화) | Pro Agent 전체 + 우선 처리 큐 |
 
-### x402 프로토콜 동작 방식
-1. **요청 시도**: AI 에이전트가 AZNP API에 요청합니다.
-2. **402 Payment Required**: Free 한도를 초과하거나 고급 기능 요청 시 HTTP 402 반환 및 `PAYMENT-REQUIRED` 응답 헤더(수신 지갑, 금액, 네트워크) 전달.
-3. **자동 결제 & 재요청**: 에이전트 지갑이 온체인(USDC) 소액결제 수행 후 `PAYMENT-SIGNATURE` 헤더를 포함하여 재요청.
-4. **결과 수신**: AZNP Worker가 서명 검증 후 Markdown 반환.
+### Solana 결제 및 충전 정보
+- **Solana 수신 지갑 주소**: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
+- **USDC Mint Address**: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
+- **충전 엔드포인트**: `POST /v1/topup` (`{ "wallet": "...", "tx_hash": "..." }`)
 
-#### 에이전트 코드 예시 (TypeScript)
-```ts
-import { x402fetch } from "@x402/fetch";
-
-const res = await x402fetch(
-  "https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&mode=summary",
-  {
-    wallet: agentWallet, // USDC 잔액 지갑
-    maxAmount: "0.05",
-  }
-);
-const markdown = await res.text();
-```
+### 에이전트 인증 헤더 Specification
+- `x-wallet-address`: Solana Public Key (Base58)
+- `x-timestamp`: Unix Timestamp (초 단위, 5분 이내)
+- `x-signature`: `x402:{timestamp}` 메세지에 대한 Ed25519 서명 (Base58)
 
 ---
 

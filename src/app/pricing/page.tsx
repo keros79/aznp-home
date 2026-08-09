@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "요금제 (x402 Micropayments)",
+  title: "요금제 (Solana USDC Micro-payment)",
   description:
-    "AZNP는 계정과 API Key 없이 에이전트 지갑(USDC)으로 건당 결제하는 x402 프로토콜을 지원합니다.",
+    "AZNP는 계정과 API Key 없이 솔라나 지갑(USDC) 충전 및 Ed25519 서명 인증으로 동작하는 무키(Stateless) 소액 결제를 제공합니다.",
 };
 
 const plans = [
@@ -20,22 +20,22 @@ const plans = [
     features: [
       { label: "Tier 1 Cloudflare Native", yes: true },
       { label: "Tier 2 경량 자체 변환", yes: true },
-      { label: "Tier 3 JS Rendering", yes: false, note: "x402 필요" },
-      { label: "Advanced Extraction (+15~30%)", yes: false, note: "x402 필요" },
-      { label: "요약 모드 (mode=summary)", yes: false, note: "x402 필요" },
-      { label: "max_tokens 제한", yes: false, note: "x402 필요" },
-      { label: "Structured JSON 출력", yes: false, note: "x402 필요" },
+      { label: "Tier 3 JS Rendering", yes: false, note: "USDC 충전 필요" },
+      { label: "Advanced Extraction (+15~30%)", yes: false, note: "USDC 충전 필요" },
+      { label: "요약 모드 (mode=summary)", yes: false, note: "USDC 충전 필요" },
+      { label: "max_tokens 제한", yes: false, note: "USDC 충전 필요" },
+      { label: "Structured JSON 출력", yes: false, note: "USDC 충전 필요" },
       { label: "Rate Limit", yes: true, note: "15 RPM / 1,000 RPD" },
       { label: "Cache API TTL", yes: true, note: "1시간" },
-      { label: "회원가입 / 로그인", yes: true, note: "불필요 (Zero-Friction)" },
+      { label: "회원가입 / 로그인 / Key", yes: true, note: "불필요 (Zero-Friction)" },
     ],
     cta: { label: "지금 시작하기", href: "/docs" },
   },
   {
-    name: "Pay-per-request (x402)",
-    price: "~$0.01",
-    period: "/ 건당 (USDC)",
-    target: "자율 실행 AI 에이전트",
+    name: "Pro Agent",
+    price: "$20",
+    period: "USDC 충전 (12,000회)",
+    target: "자율 실행 AI 에이전트 / 개발자",
     color: "var(--color-indigo-400)",
     bg: "rgba(99,102,241,0.08)",
     border: "rgba(99,102,241,0.4)",
@@ -45,33 +45,52 @@ const plans = [
       { label: "Tier 2 Advanced Extraction", yes: true },
       { label: "Tier 3 JS Rendering (동적 웹)", yes: true },
       { label: "Advanced Extraction (+15~30%)", yes: true },
-      { label: "요약 모드 (mode=summary)", yes: true },
-      { label: "max_tokens 및 Structured JSON", yes: true },
-      { label: "Rate Limit", yes: true, note: "높은 동시 요청 풀" },
-      { label: "Cache API TTL", yes: true, note: "6시간 + SWR" },
-      { label: "x402 프로토콜 결제", yes: true, note: "402 Payment Required" },
-      { label: "회원가입 / API Key 관리", yes: true, note: "전혀 불필요 (온체인)" },
+      { label: "요약 모드 & max_tokens", yes: true },
+      { label: "Structured JSON 출력", yes: true },
+      { label: "건당 단가", yes: true, note: "$0.00166 (약 2.1원)" },
+      { label: "수수료 비중 (0.7 USDC 기준)", yes: true, note: "3.5%" },
+      { label: "Solana Ed25519 서명 인증", yes: true, note: "무키 (Stateless)" },
+      { label: "회원가입 / API Key 관리", yes: true, note: "불필요 (지갑 계정)" },
     ],
-    cta: { label: "x402 연동 가이드", href: "/docs/api" },
+    cta: { label: "충전 API 가이드", href: "/docs/api" },
+  },
+  {
+    name: "Enterprise",
+    price: "$100",
+    period: "USDC 충전 (80,000회)",
+    target: "대규모 에이전트 서비스",
+    color: "var(--color-purple-400)",
+    bg: "rgba(168,85,247,0.06)",
+    border: "rgba(168,85,247,0.25)",
+    featured: false,
+    features: [
+      { label: "Pro Agent 기능 전체 포함", yes: true },
+      { label: "건당 단가 극소화", yes: true, note: "$0.00125 (약 1.6원)" },
+      { label: "수수료 비중 (0.7 USDC 기준)", yes: true, note: "0.7% (최소화)" },
+      { label: "아끼는 LLM 토큰 가치", yes: true, note: "약 $5,600 상당" },
+      { label: "우선 처리 큐", yes: true },
+      { label: "Solana Ed25519 서명 인증", yes: true, note: "무키 (Stateless)" },
+    ],
+    cta: { label: "API 레퍼런스 보기", href: "/docs/api" },
   },
 ];
 
 const faqs = [
   {
-    q: "x402 프로토콜이 무엇인가요?",
-    a: "x402는 AI 에이전트가 회원가입이나 API Key 발급 없이 HTTP 402 Payment Required 응답을 받아 온체인 암호화폐(USDC)로 건당 소액 결제하고 결과를 반환받는 에이전트 전용 오픈 결제 표준입니다.",
+    q: "Solana Wallet-based Stateless 결제가 무엇인가요?",
+    a: "별도의 회원가입이나 API Key를 생성하지 않고, 솔라나 지갑 주소(PublicKey) 자체를 계정 ID로 사용합니다. $20 USDC 이상 송금 후 트랜잭션 해시를 제출해 크레딧을 충전하고, API 호출 시 Ed25519 서명을 헤더에 포함해 인증합니다.",
   },
   {
-    q: "정말 회원가입이나 API Key가 필요 없나요?",
-    a: "네! AZNP는 Zero-Noise뿐만 아니라 Zero-Friction을 지향합니다. 에이전트 지갑만 있으면 계정 생성이나 Key 유출 걱정 없이 온체인 지불로 즉시 모든 고급 기능을 사용할 수 있습니다.",
+    q: "충전은 어떻게 진행하나요?",
+    a: "Solana 수신 지갑 주소(GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E)로 최소 $20 USDC를 입금하신 후, `POST /v1/topup` 엔드포인트로 본인의 지갑 주소와 트랜잭션 해시(tx_hash)를 제출하면 크레딧이 즉시 부여됩니다.",
   },
   {
-    q: "어떤 네트워크와 통화를 지원하나요?",
-    a: "Base, Arbitrum, Solana 등 주요 Layer2 네트워크의 USDC 소액 결제를 지원합니다.",
+    q: "서명 인증 헤더는 어떻게 작성하나요?",
+    a: "요청 시 `x-wallet-address`(지갑 주소), `x-timestamp`(현재 시간 Unix초), `x-signature`(`x402:{timestamp}` 메세지의 Ed25519 서명) 3가지 헤더를 포함하면 됩니다.",
   },
   {
-    q: "Rate Limit이 초과되면 어떻게 되나요?",
-    a: "Free 한도(15 RPM)를 초과하거나 JS 렌더링/요약 등 고급 옵션을 요청할 때 HTTP 402 응답이 리턴됩니다. 에이전트 헤더로 x402 결제를 보내면 즉시 처리됩니다.",
+    q: "정말 API Key 보관이나 회원가입이 필요 없나요?",
+    a: "네! 비밀키 보관이나 회원가입 관리가 전혀 없습니다. 에이전트 지갑 비밀키로 서명하여 즉시 무키(Stateless)로 호출할 수 있습니다.",
   },
 ];
 
@@ -81,24 +100,24 @@ export default function PricingPage() {
       <div className="section-wrapper">
         {/* 헤더 */}
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-          <span className="badge badge-cyan" style={{ marginBottom: "1rem" }}>x402 Agentic Payment</span>
+          <span className="badge badge-cyan" style={{ marginBottom: "1rem" }}>Solana USDC Micro-payment</span>
           <h1 className="section-title" style={{ marginBottom: "1rem" }}>
-            에이전트를 위한 건당 소액 결제
+            에이전트를 위한 무키(Stateless) 소액 결제
           </h1>
           <p className="section-subtitle">
             회원가입, 로그인, API Key 관리가 전혀 필요 없습니다.
             <br />
-            무료로 시작하고, 에이전트는 x402(USDC)로 건당 필요한 만큼만 지불하세요.
+            Solana 지갑(USDC) 소액 충전으로 크레딧을 부여받아 즉시 사용하세요.
           </p>
         </div>
 
-        {/* 요금 카드 (2개 중심) */}
+        {/* 요금 카드 (3개 배치) */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "1.5rem",
-            maxWidth: "840px",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "1.25rem",
+            maxWidth: "1080px",
             margin: "0 auto 4rem",
           }}
           className="plans-grid"
@@ -108,7 +127,7 @@ export default function PricingPage() {
               key={plan.name}
               className="glass-card"
               style={{
-                padding: "2rem",
+                padding: "1.75rem",
                 border: `1px solid ${plan.border}`,
                 background: plan.bg,
                 position: "relative",
@@ -142,7 +161,7 @@ export default function PricingPage() {
                     {plan.price}
                   </span>
                   {plan.period && (
-                    <span style={{ color: "var(--color-slate-400)", fontSize: "0.875rem" }}>{plan.period}</span>
+                    <span style={{ color: "var(--color-slate-400)", fontSize: "0.85rem" }}>{plan.period}</span>
                   )}
                 </div>
               </div>
@@ -176,30 +195,58 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* 에이전트 연동 예시 세션 */}
+        {/* Solana 지갑 정보 카드 */}
+        <div style={{ maxWidth: "840px", margin: "0 auto 4rem" }}>
+          <h2 style={{ fontWeight: 800, fontSize: "1.375rem", marginBottom: "1.25rem", color: "var(--color-slate-50)", textAlign: "center" }}>
+            🏦 Solana 공식 수신 지갑 정보
+          </h2>
+          <div className="glass-card" style={{ padding: "1.75rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div>
+                <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.25rem" }}>
+                  Solana 서비스 수신 지갑 주소 (USDC)
+                </div>
+                <code className="code-block" style={{ display: "block", wordBreak: "break-all", margin: 0, padding: "0.75rem 1rem", color: "var(--color-cyan-400)" }}>
+                  GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E
+                </code>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.25rem" }}>
+                    USDC Mint Address
+                  </div>
+                  <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "var(--color-indigo-400)", wordBreak: "break-all" }}>
+                    EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+                  </code>
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.25rem" }}>
+                    최소 충전 요건
+                  </div>
+                  <div style={{ fontWeight: 700, color: "#f87171", fontSize: "0.9rem" }}>
+                    $20 USDC 이상 ($20 미만 시 거부)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 충전 API 안내 */}
         <div style={{ maxWidth: "840px", margin: "0 auto 5rem" }}>
           <h2 style={{ fontWeight: 800, fontSize: "1.375rem", marginBottom: "1.25rem", color: "var(--color-slate-50)", textAlign: "center" }}>
-            🤖 AI 에이전트 연동 예시 (x402)
+            ⚡ 충전 API (`POST /v1/topup`)
           </h2>
           <div className="glass-card" style={{ padding: "1.75rem" }}>
             <div style={{ marginBottom: "1rem", fontSize: "0.875rem", color: "var(--color-slate-300)" }}>
-              에이전트는 API Key 없이 `x402fetch` SDK나 표준 HTTP 402 헤더 핸들러로 자동 결제 및 요청을 수행합니다:
+              송금 완료 후 본인의 Solana 지갑 주소와 트랜잭션 해시(`tx_hash`)를 제출하면 즉시 크레딧이 충전됩니다:
             </div>
             <div className="code-block" style={{ margin: 0 }}>
-              <div style={{ color: "var(--color-slate-500)", marginBottom: "0.5rem" }}>// TypeScript / Node.js Agent</div>
+              <div style={{ color: "var(--color-slate-500)", marginBottom: "0.5rem" }}># 충전 요청 예시</div>
               <div>
-                <span style={{ color: "var(--color-purple-400)" }}>import</span>{" "}
-                {"{ x402fetch }"} <span style={{ color: "var(--color-purple-400)" }}>from</span>{" "}
-                <span style={{ color: "var(--color-indigo-400)" }}>&quot;@x402/fetch&quot;</span>;{"\n\n"}
-                <span style={{ color: "var(--color-purple-400)" }}>const</span> res = <span style={{ color: "var(--color-purple-400)" }}>await</span>{" "}
-                <span style={{ color: "var(--color-cyan-400)" }}>x402fetch</span>(
-                <br />
-                {"  "}<span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;mode=summary&quot;</span>,
-                <br />
-                {"  "}{"{"} wallet: agentWallet, maxAmount: <span style={{ color: "var(--color-indigo-400)" }}>&quot;0.05&quot;</span> {"}"}
-                <br />
-                );{"\n\n"}
-                <span style={{ color: "var(--color-purple-400)" }}>const</span> markdown = <span style={{ color: "var(--color-purple-400)" }}>await</span> res.<span style={{ color: "var(--color-cyan-400)" }}>text</span>();
+                <span style={{ color: "var(--color-cyan-400)" }}>curl</span> -X POST <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/v1/topup&quot;</span>{" \\\n  "}
+                -H <span style={{ color: "var(--color-purple-400)" }}>&quot;Content-Type: application/json&quot;</span>{" \\\n  "}
+                -d <span style={{ color: "var(--color-indigo-400)" }}>&apos;{"{"}&quot;wallet&quot;: &quot;7xKX...SolanaPublicKey&quot;, &quot;tx_hash&quot;: &quot;5K...SolanaTxHash&quot;{"}"}&apos;</span>
               </div>
             </div>
           </div>
@@ -208,7 +255,7 @@ export default function PricingPage() {
         {/* FAQ */}
         <div style={{ maxWidth: "720px", margin: "0 auto" }}>
           <h2 style={{ fontWeight: 800, fontSize: "1.5rem", textAlign: "center", marginBottom: "2.5rem", color: "var(--color-slate-50)" }}>
-            자주 묻는 질문 (x402 FAQ)
+            자주 묻는 질문 (Solana FAQ)
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {faqs.map(({ q, a }) => (
@@ -226,7 +273,7 @@ export default function PricingPage() {
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .plans-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
