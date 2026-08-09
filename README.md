@@ -1,15 +1,16 @@
 # AZNP Home (Agentic Zero-Noise Proxy 랜딩페이지)
 
-AZNP(Agentic Zero-Noise Proxy) 랜딩페이지 및 문서 사이트입니다.
-회원가입과 API Key 없이 AI 에이전트 지갑(USDC)으로 건당 소액결제하는 x402 프로토콜을 지원합니다.
+AZNP(Agentic Zero-Noise Proxy) 공식 랜딩페이지 및 문서 사이트입니다.
+회원가입, 비밀번호, API Key 관리 없이 AI 에이전트 솔라나 지갑(USDC) 및 Ed25519 서명 인증으로 동작하는 무키(Stateless) 소액 충전 결제 프로토콜을 지원합니다.
 Next.js 15 App Router + Tailwind CSS v4 + Zustand + TanStack Query로 구축되었습니다.
 
 ## 🚀 기술 스택
 - **Framework**: Next.js 15 (App Router, Static Export `output: 'export'`)
 - **Styling**: Tailwind CSS v4 (`@theme` 기반 디자인 토큰)
-- **State Management**: Zustand
+- **Localization**: i18n (English `en` 기본, 한국어 `ko` 지원, 🌐 언어 스위처 제공)
+- **State Management**: Zustand (`i18nStore`, `demoStore`)
 - **Data Fetching**: TanStack Query v5
-- **Deployment**: Cloudflare Pages (`/out` 정적 자산 배포)
+- **Deployment**: Cloudflare Pages (GitHub 저장소 자동 연동 배포)
 
 ---
 
@@ -33,16 +34,26 @@ AZNP는 **회원가입, 로그인, API Key 관리가 전혀 없는 무키(Statel
 
 ---
 
+## 🤖 AI 에이전트 전용 표준 규격 (Machine-Readable Specs)
+
+도메인 루트(`/`)에 LLM, AI 에이전트, GPT Actions가 자율 검색/파싱할 수 있는 표준 규격 문서 3종을 제공합니다:
+
+- **[`/llms.txt`](https://aznp-home.pages.dev/llms.txt)**: AI 에이전트 탐색용 글로벌 표준 마크다운 개요 명세
+- **[`/llms-full.txt`](https://aznp-home.pages.dev/llms-full.txt)**: 전체 API 파라미터, 헤더, Ed25519 서명 코드 포함 에이전트 가이드
+- **[`/openapi.json`](https://aznp-home.pages.dev/openapi.json)**: GPT Actions, Custom GPTs, AutoGen, LangChain 툴 자동 연동용 OpenAPI 3.0 명세
+
+---
+
 ## 🛠️ 개발 및 테스트
 
 ```bash
-# 개발 서버 실행
+# 개발 서버 실행 (http://localhost:3000)
 npm run dev
 
-# 빌드 테스트 (정적 HTML /out 내보내기)
+# 정적 빌드 테스트 (output: 'export' → /out 내보내기)
 npm run build
 
-# 로컬 Cloudflare Pages 로컬 에뮬레이션 테스트
+# 로컬 Cloudflare Pages 에뮬레이션 테스트
 npm run preview
 ```
 
@@ -50,39 +61,21 @@ npm run preview
 
 ## ☁️ Cloudflare Pages 배포 방법
 
-### 방법 1. CLI 직접 배포 (권장 & 가장 빠름)
+본 프로젝트는 **Cloudflare Pages - GitHub 자동 연동**이 완료되어 있습니다.
+
+### 방법 1. GitHub 연동 자동 배포 (기본 동작)
+`main` 브랜치에 코드가 푸시되면 Cloudflare Pages가 정적 빌드(`npm run build`) 후 자동으로 글로벌 에지 네트워크로 내보냅니다.
+- **Build command**: `npm run build`
+- **Build output directory**: `out`
+
+> ⚠️ **주의사항 (Agent Rule)**: 프로덕션 배포 전 반드시 사용자에게 변경 사항을 설명하고 사전 승인을 받아야 합니다.
+
+### 방법 2. Wrangler CLI 직접 배포 (수동 배포 필요 시)
 
 ```bash
-# 1. Cloudflare 로그인 (최초 1회)
-npx wrangler login
-
-# 2. 빌드 및 배포
+# 1. 빌드 및 직접 배포
 npm run deploy
 ```
-
----
-
-### 방법 2. Cloudflare Dashboard 대시보드 자동 연결
-
-1. [Cloudflare Dashboard](https://dash.cloudflare.com/) 접속 → **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**
-2. GitHub 저장소(`aznp-home`) 선택
-3. 빌드 설정 지정:
-   - **Framework preset**: `Next.js (Static)` 또는 `None`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `out`
-4. **Save and Deploy** 클릭
-
----
-
-### 방법 3. GitHub Actions CI/CD 자동 배포
-
-저장소 `main` 브랜치에 코드를 푸시하면 `.github/workflows/deploy.yml`이 실행되어 자동으로 배포됩니다.
-
-#### 필수 GitHub Secrets 설정:
-1. GitHub 저장소 → **Settings** → **Secrets and variables** → **Actions**
-2. 다음 Secret 추가:
-   - `CLOUDFLARE_API_TOKEN`: Cloudflare Dashboard에서 생성한 Pages 편집 권한 API 토큰
-   - `CLOUDFLARE_ACCOUNT_ID`: Cloudflare 계정 ID
 
 ---
 
@@ -90,8 +83,10 @@ npm run deploy
 
 ```
 ├── public/
-│   ├── robots.txt       # Content-Signal 지시어 포함
-│   └── llms.txt         # AI 에이전트용 웹사이트 문서
+│   ├── robots.txt       # AI 크롤러 지침 및 명세 지시어 포함
+│   ├── llms.txt         # AI 에이전트 탐색용 개요 명세
+│   ├── llms-full.txt    # AI 에이전트 통합 상세 가이드
+│   └── openapi.json     # OpenAPI 3.0 규격 명세
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx          # 메인 랜딩페이지
@@ -99,9 +94,10 @@ npm run deploy
 │   │   ├── docs/             # 문서 및 API 레퍼런스
 │   │   ├── globals.css       # 전역 스타일 및 Tailwind @theme
 │   │   └── sitemap.ts        # sitemap.xml 생성
-│   ├── components/      # UI 컴포넌트
-│   ├── lib/             # API 클라이언트 및 Providers
-│   └── store/           # Zustand 스토어
+│   ├── components/      # UI 컴포넌트 (Hero, HowItWorks, Features, BotDemo, LanguageSwitcher 등)
+│   ├── i18n/            # 다국어 사전 (dictionaries.ts - en, ko)
+│   ├── lib/             # API 클라이언트 (aznpClient.ts) 및 Providers
+│   └── store/           # Zustand 스토어 (i18nStore.ts, demoStore.ts)
 ├── wrangler.toml        # Cloudflare Pages 설정
-└── next.config.ts       # output: 'export' 설정
+└── next.config.ts       # output: 'export' 정적 내보내기 설정
 ```
