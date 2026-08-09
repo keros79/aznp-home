@@ -26,10 +26,11 @@ export default function ApiReferencePage() {
 
   const responseHeaders = [
     { name: "X-AZNP-Plan", desc: lang === "en" ? "Execution plan (free | pro | enterprise)" : "사용 플랜 (free | pro | enterprise)" },
-    { name: "X-AZNP-Source", desc: lang === "en" ? "Conversion source (cloudflare-native | aznp-self | browser-rendering | cache | kv)" : "변환 소스 (cloudflare-native | aznp-self | browser-rendering | cache | kv)" },
-    { name: "X-AZNP-Cache", desc: lang === "en" ? "Cache status (HIT | MISS)" : "캐시 상태 (HIT | MISS)" },
-    { name: "X-Token-Reduction", desc: lang === "en" ? "Estimated token reduction % (e.g. Estimated 82%)" : "추정 토큰 절감률 (예: Estimated 82%)" },
-    { name: "X-Markdown-Tokens", desc: lang === "en" ? "Output Markdown token count (estimated)" : "반환 Markdown 토큰 수 (추정)" },
+    { name: "X-AZNP-Source", desc: lang === "en" ? "Conversion source (cloudflare-native | aznp-self | browser-rendering | openapi-compressed | cache | kv)" : "변환 소스 (cloudflare-native | aznp-self | browser-rendering | openapi-compressed | cache | kv)" },
+    { name: "X-AZNP-Cache", desc: lang === "en" ? "Cache status (HIT | MISS | BYPASS)" : "캐시 상태 (HIT | MISS | BYPASS)" },
+    { name: "X-AZNP-Bypass", desc: lang === "en" ? "Set to 'true' on 307 Redirect for files or Free plan OpenAPI requests" : "파일 또는 Free 플랜 OpenAPI 요청에 대한 307 Redirect 시 'true' 설정" },
+    { name: "X-Token-Reduction", desc: lang === "en" ? "Estimated token reduction % (e.g. 88%)" : "추정 토큰 절감률 (예: 88%)" },
+    { name: "X-Markdown-Tokens", desc: lang === "en" ? "Output token count (estimated)" : "반환 토큰 수 (추정)" },
     { name: "X-RateLimit-Remaining", desc: lang === "en" ? "Remaining credit request count" : "남은 크레딧 요청 수" },
     { name: "PAYMENT-REQUIRED", desc: lang === "en" ? "Top-up spec JSON returned on HTTP 402" : "HTTP 402 반환 시 충전 정보 JSON (수신 지갑 주소, 충전 단가)" },
   ];

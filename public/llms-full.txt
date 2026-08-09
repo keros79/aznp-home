@@ -10,6 +10,10 @@ AZNP is an edge proxy designed explicitly for LLMs, AI Autonomous Agents, and RA
 
 AZNP operates on a **Stateless, No-Key Architecture**. There are no accounts, passwords, or stored API keys to manage or leak. Authentication is performed via Solana Ed25519 digital signatures.
 
+### Special Handling Rules
+- **OpenAPI / Swagger Specs (`openapi.json`, `swagger.json`, `.yaml`)**: Pro Tier requests receive 80~90% compressed, high-density JSON. Free Tier requests receive a 307 Temporary Redirect to the original raw spec file.
+- **Files & Binary Media (PDF, Images, Video, Audio, Archives)**: Automatically return 307 Temporary Redirect (`X-AZNP-Bypass: true`) to original URL without consuming Worker memory.
+
 ---
 
 ## 2. API Endpoints

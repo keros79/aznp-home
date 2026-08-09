@@ -39,6 +39,7 @@ export default function PricingPreview() {
       features: [
         "Tier 1 + 2 + 3 (JS Rendering) ✅",
         "Advanced Extraction (+15~30% Savings)",
+        "OpenAPI / Swagger 90% Compression ✅",
         "Summary mode & max_tokens",
         "Structured JSON Output",
         "Solana Ed25519 Stateless Auth",
@@ -56,7 +57,7 @@ export default function PricingPreview() {
       border: "rgba(168,85,247,0.25)",
       featured: false,
       features: [
-        "All Pro Agent Features Included ✅",
+        "All Pro Agent Features (JS Rendering, OpenAPI/Swagger 90% Compression) ✅",
         "Scale Agent Workloads",
         "Lowest Per-Req Unit Cost ($0.00125)",
         "Solana Ed25519 Stateless Auth",

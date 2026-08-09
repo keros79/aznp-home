@@ -6,6 +6,8 @@ AZNP strips HTML bloat, navigation, ads, scripts, and CSS from web pages, conver
 
 ## Core Capabilities
 - Token Reduction: 75~90% average LLM token savings (up to 95% with Advanced Extraction)
+- OpenAPI Spec Compression: 80~90% token reduction for `openapi.json` / `swagger.json` (Pro Tier; Free Tier returns 307 Redirect to raw file)
+- File Bypass: PDF, images, video, and audio URLs return 307 Temporary Redirect to original URL
 - 3-Tier Cascading Engine: Cloudflare Native → Self Extraction → Tier 3 Browser Rendering (JS)
 - Multi-Tier Caching: Cache API + KV saving 70~90% CPU on repeated requests
 - Stateless Authentication: Solana Ed25519 wallet signatures (`x-wallet-address`, `x-signature`, `x-timestamp`)
