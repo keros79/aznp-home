@@ -146,7 +146,7 @@
     "/v1/topup": {
       "post": {
         "summary": "Top up request credits using Solana USDC transaction hash",
-        "description": "Submit a Solana transaction hash after sending $20 USDC or more to receiver wallet GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E",
+        "description": "Submit a Solana transaction hash after sending $20 USDC or more for credit top-up",
         "operationId": "topupCredits",
         "requestBody": {
           "required": true,

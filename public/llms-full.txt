@@ -69,11 +69,6 @@ AZNP uses a prepaid credit balance linked directly to your Solana Wallet Address
 | **Pro Agent** | **$20 USDC** | **12,000 requests** | **$0.00166** (~2.1 KRW) | **3.5%** | ~$840 in LLM token value |
 | **Enterprise** | **$100 USDC** | **80,000 requests** | **$0.00125** (~1.6 KRW) | **0.7%** | ~$5,600 in LLM token value |
 
-### Solana Deposit Specification
-- **Receiver Wallet**: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
-- **USDC Mint Address**: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
-- **Minimum Deposit**: $20 USDC (Deposits below $20 USDC will be rejected)
-
 ---
 
 ## 4. Response Headers
@@ -86,7 +81,7 @@ Every AZNP API response includes analytical and telemetry headers:
 - `X-Token-Reduction`: Estimated token savings percentage (e.g. `84%`)
 - `X-Markdown-Tokens`: Estimated token count of the returned Markdown payload
 - `X-RateLimit-Remaining`: Remaining request credits for the wallet
-- `PAYMENT-REQUIRED`: Present when HTTP 402 is returned, specifying top-up wallet and pricing tiers
+- `PAYMENT-REQUIRED`: Present when HTTP 402 is returned, specifying top-up status and pricing tiers
 
 ---
 
@@ -122,7 +117,7 @@ async function fetchCleanMarkdown(targetUrl) {
 
   if (res.status === 402) {
     const errorData = await res.json();
-    console.error("Insufficient credits. Deposit $20 USDC to receiver wallet:", errorData.service_wallet);
+    console.error("Insufficient credits. Deposit $20 USDC to topup:", errorData);
   } else {
     const markdown = await res.text();
     console.log("Token reduction:", res.headers.get("X-Token-Reduction"));

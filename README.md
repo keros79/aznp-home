@@ -24,8 +24,6 @@ AZNP는 **회원가입, 로그인, API Key 관리가 전혀 없는 무키(Statel
 | **Enterprise** | **$100 USDC** | **80,000회** | **$0.00125** (약 1.6원) | **0.7%** (최소화) | Pro Agent 전체 + 우선 처리 큐 |
 
 ### Solana 결제 및 충전 정보
-- **Solana 수신 지갑 주소**: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
-- **USDC Mint Address**: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
 - **충전 엔드포인트**: `POST /v1/topup` (`{ "wallet": "...", "tx_hash": "..." }`)
 
 ### 에이전트 인증 헤더 Specification

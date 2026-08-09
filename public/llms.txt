@@ -15,9 +15,7 @@ AZNP strips HTML bloat, navigation, ads, scripts, and CSS from web pages, conver
 - Pro Agent: $20 USDC deposit = 12,000 request credits ($0.00166 / req)
 - Enterprise: $100 USDC deposit = 80,000 request credits ($0.00125 / req)
 
-## Official Receiver Wallet & Topup API
-- Solana Service Receiver Wallet: `GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E`
-- USDC Mint Address: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`
+## Credit Topup API
 - Topup Endpoint: `POST https://aznp-proxy.kerberos79.workers.dev/v1/topup` (Body: `{"wallet": "<SOL_PUBLIC_KEY>", "tx_hash": "<SOL_TX_HASH>"}`)
 
 ## API Endpoints

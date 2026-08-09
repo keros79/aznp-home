@@ -181,43 +181,6 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Solana 지갑 정보 카드 */}
-        <div style={{ maxWidth: "840px", margin: "0 auto 4rem" }}>
-          <h2 style={{ fontWeight: 800, fontSize: "1.375rem", marginBottom: "1.25rem", color: "var(--color-slate-50)", textAlign: "center" }}>
-            {t.walletTitle}
-          </h2>
-          <div className="glass-card" style={{ padding: "1.75rem" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div>
-                <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.25rem" }}>
-                  {t.walletAddrLabel}
-                </div>
-                <code className="code-block" style={{ display: "block", wordBreak: "break-all", margin: 0, padding: "0.75rem 1rem", color: "var(--color-cyan-400)" }}>
-                  GuUdPHj3dnafbFvF2gMscCVAMCd4NvSE5ktsrbdAvT4E
-                </code>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                <div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.25rem" }}>
-                    {t.usdcMintLabel}
-                  </div>
-                  <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "var(--color-indigo-400)", wordBreak: "break-all" }}>
-                    EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
-                  </code>
-                </div>
-                <div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.25rem" }}>
-                    {t.minDepositLabel}
-                  </div>
-                  <div style={{ fontWeight: 700, color: "#f87171", fontSize: "0.9rem" }}>
-                    {t.minDepositVal}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* 충전 API 안내 */}
         <div style={{ maxWidth: "840px", margin: "0 auto 5rem" }}>
           <h2 style={{ fontWeight: 800, fontSize: "1.375rem", marginBottom: "1.25rem", color: "var(--color-slate-50)", textAlign: "center" }}>
