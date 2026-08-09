@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
 
 export default function Hero() {
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].hero;
+
   return (
     <section
       style={{
@@ -41,7 +48,7 @@ export default function Hero() {
         <div style={{ marginBottom: "1.5rem" }}>
           <span className="badge badge-indigo">
             <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--color-indigo-400)", display: "inline-block" }} />
-            v2.1 · Cloudflare Edge
+            {t.badge}
           </span>
         </div>
 
@@ -55,9 +62,9 @@ export default function Hero() {
             animationFillMode: "forwards",
           }}
         >
-          AI 에이전트의 눈에는
+          {t.titleLine1}
           <br />
-          <span className="text-gradient">노이즈가 없어야 합니다</span>
+          <span className="text-gradient">{t.titleLine2}</span>
         </h1>
 
         {/* 서브헤드라인 */}
@@ -70,10 +77,8 @@ export default function Hero() {
             animationFillMode: "forwards",
           }}
         >
-          AZNP는 웹페이지의 광고, 네비게이션, CSS/JS를 제거하고
-          <br />
-          초경량 Markdown으로 변환합니다.{" "}
-          <strong style={{ color: "var(--color-cyan-400)" }}>평균 75~90% 토큰 절감.</strong>
+          {t.subtitle}{" "}
+          <strong style={{ color: "var(--color-cyan-400)" }}>{t.subtitleHighlight}</strong>
         </p>
 
         {/* CTA 버튼 */}
@@ -90,10 +95,10 @@ export default function Hero() {
           }}
         >
           <Link href="/pricing" className="btn-primary">
-            무료로 시작하기 →
+            {t.getStarted}
           </Link>
           <Link href="/docs/api" className="btn-outline">
-            API 문서 보기
+            {t.apiDocs}
           </Link>
         </div>
 
@@ -115,7 +120,7 @@ export default function Hero() {
             <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#ffbd2e" }} />
             <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#28c840" }} />
             <span style={{ flex: 1, textAlign: "center", fontSize: "0.75rem", color: "var(--color-slate-500)", marginTop: "-1px" }}>
-              terminal
+              {t.terminalHeader}
             </span>
           </div>
           <pre
@@ -128,15 +133,15 @@ export default function Hero() {
               overflowX: "auto",
             }}
           >
-            <span style={{ color: "var(--color-slate-500)" }}># Free: 즉시 사용 가능</span>{"\n"}
+            <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentFree}</span>{"\n"}
             <span style={{ color: "var(--color-cyan-400)" }}>curl</span>{" "}
             <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/&quot;</span>{"\n"}
             {"  "}<span style={{ color: "var(--color-slate-400)" }}>?url=</span>
             <span style={{ color: "var(--color-purple-400)" }}>https://news.ycombinator.com</span>{"\n\n"}
-            <span style={{ color: "var(--color-slate-500)" }}># Pro: 고급 추출 + 요약</span>{"\n"}
+            <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentPaid}</span>{"\n"}
             <span style={{ color: "var(--color-cyan-400)" }}>curl</span>{" "}
             <span style={{ color: "var(--color-slate-400)" }}>-H</span>{" "}
-            <span style={{ color: "var(--color-indigo-400)" }}>&quot;X-API-Key: aznp_pro_xxxxx&quot;</span>{" \\"}{"\n"}
+            <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-wallet-address: 7xKX...SolanaPublicKey&quot;</span>{" \\"}{"\n"}
             {"  "}<span style={{ color: "var(--color-indigo-400)" }}>&quot;...?url=https://example.com&amp;mode=summary&quot;</span>
           </pre>
         </div>
@@ -156,9 +161,9 @@ export default function Hero() {
           }}
         >
           {[
-            { value: "75~90%", label: "토큰 절감" },
-            { value: "3-Tier", label: "Cascading 변환" },
-            { value: "전 세계", label: "Cloudflare Edge" },
+            { value: t.statTokens, label: t.statTokensLabel },
+            { value: t.statCascading, label: t.statCascadingLabel },
+            { value: t.statEdge, label: t.statEdgeLabel },
           ].map(({ value, label }) => (
             <div key={label} style={{ textAlign: "center" }}>
               <div

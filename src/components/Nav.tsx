@@ -3,17 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-
-const navLinks = [
-  { href: "/", label: "홈" },
-  { href: "/pricing", label: "요금" },
-  { href: "/docs", label: "문서" },
-  { href: "/docs/api", label: "API" },
-];
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Nav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].nav;
+
+  const navLinks = [
+    { href: "/", label: t.home },
+    { href: "/pricing", label: t.pricing },
+    { href: "/docs", label: t.docs },
+    { href: "/docs/api", label: t.api },
+  ];
 
   return (
     <header
@@ -66,7 +71,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav style={{ display: "flex", gap: "0.25rem" }} className="hidden sm:flex">
+        <nav style={{ display: "flex", gap: "0.25rem", alignItems: "center" }} className="hidden sm:flex">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
@@ -87,10 +92,11 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* CTA */}
+        {/* CTA & Language Switcher */}
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          <Link href="/pricing" className="btn-primary" style={{ padding: "0.5rem 1.25rem", fontSize: "0.875rem" }}>
-            무료로 시작
+          <LanguageSwitcher />
+          <Link href="/pricing" className="btn-primary" style={{ padding: "0.45rem 1.125rem", fontSize: "0.875rem" }}>
+            {t.cta}
           </Link>
           {/* 모바일 햄버거 */}
           <button
@@ -105,7 +111,7 @@ export default function Nav() {
               color: "var(--color-slate-400)",
               fontSize: "1.1rem",
             }}
-            aria-label="메뉴 열기"
+            aria-label="Toggle menu"
           >
             {menuOpen ? "✕" : "☰"}
           </button>

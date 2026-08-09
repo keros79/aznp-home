@@ -1,24 +1,31 @@
-import Link from "next/link";
+"use client";
 
-const footerLinks: Record<string, { label: string; href: string; external?: boolean }[]> = {
-  "제품": [
-    { label: "소개", href: "/" },
-    { label: "요금", href: "/pricing" },
-    { label: "문서", href: "/docs" },
-    { label: "API 레퍼런스", href: "/docs/api" },
-  ],
-  "리소스": [
-    { label: "Cloudflare Workers", href: "https://workers.cloudflare.com", external: true },
-    { label: "Markdown for Agents", href: "https://blog.cloudflare.com/markdown-for-agents/", external: true },
-    { label: "GitHub", href: "https://github.com", external: true },
-  ],
-  "법적 고지": [
-    { label: "이용약관", href: "/terms" },
-    { label: "개인정보처리방침", href: "/privacy" },
-  ],
-};
+import Link from "next/link";
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
 
 export default function Footer() {
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].footer;
+
+  const footerLinks: Record<string, { label: string; href: string; external?: boolean }[]> = {
+    [t.catProduct]: [
+      { label: t.intro, href: "/" },
+      { label: t.pricing, href: "/pricing" },
+      { label: t.docs, href: "/docs" },
+      { label: t.apiRef, href: "/docs/api" },
+    ],
+    [t.catResources]: [
+      { label: "Cloudflare Workers", href: "https://workers.cloudflare.com", external: true },
+      { label: "Markdown for Agents", href: "https://blog.cloudflare.com/markdown-for-agents/", external: true },
+      { label: "GitHub", href: "https://github.com", external: true },
+    ],
+    [t.catLegal]: [
+      { label: t.terms, href: "/terms" },
+      { label: t.privacy, href: "/privacy" },
+    ],
+  };
+
   return (
     <footer
       style={{
@@ -64,9 +71,7 @@ export default function Footer() {
               </span>
             </Link>
             <p style={{ fontSize: "0.9rem", color: "var(--color-slate-400)", lineHeight: 1.7, maxWidth: "280px" }}>
-              AI 에이전트를 위한 초경량 Markdown 프록시.
-              <br />
-              노이즈를 제거하고, 토큰을 절감하세요.
+              {t.brandDesc}
             </p>
             <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
               <span className="badge badge-indigo">Cloudflare Edge</span>
@@ -121,13 +126,10 @@ export default function Footer() {
           }}
         >
           <p style={{ fontSize: "0.85rem", color: "var(--color-slate-500)" }}>
-            © 2026 AZNP. MIT License.
+            {t.copyright}
           </p>
           <p style={{ fontSize: "0.85rem", color: "var(--color-slate-500)" }}>
-            Built on{" "}
-            <span style={{ color: "var(--color-indigo-400)" }}>Cloudflare Workers</span>
-            {" & "}
-            <span style={{ color: "var(--color-purple-400)" }}>Cloudflare Pages</span>
+            {t.builtOn}
           </p>
         </div>
       </div>

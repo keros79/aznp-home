@@ -1,58 +1,65 @@
-const tiers = [
-  {
-    id: "tier1",
-    name: "Tier 1",
-    subtitle: "Cloudflare Native",
-    color: "var(--color-cyan-400)",
-    bg: "rgba(34,211,238,0.08)",
-    border: "rgba(34,211,238,0.25)",
-    icon: "⚡",
-    desc: "Accept: text/markdown 헤더로 요청. 사이트가 지원하면 CPU 사용 0, 가장 빠른 응답.",
-    badge: "CPU ≈ 0",
-  },
-  {
-    id: "tier2",
-    name: "Tier 2",
-    subtitle: "자체 변환",
-    color: "var(--color-indigo-400)",
-    bg: "rgba(99,102,241,0.08)",
-    border: "rgba(99,102,241,0.25)",
-    icon: "🔧",
-    desc: "HTML Fetch → 본문 추출 → Markdown 변환. Free는 경량, Pro는 Advanced Extraction.",
-    badge: "Free / Pro",
-  },
-  {
-    id: "tier3",
-    name: "Tier 3",
-    subtitle: "Browser Rendering",
-    color: "var(--color-purple-400)",
-    bg: "rgba(168,85,247,0.08)",
-    border: "rgba(168,85,247,0.25)",
-    icon: "🌐",
-    desc: "JS 렌더링이 필요한 동적 페이지. Cloudflare Browser Rendering 사용. Pro 전용.",
-    badge: "Pro only",
-  },
-];
+"use client";
 
-const cacheRows = [
-  { layer: "L1 Cache API", ttl: "Free 1h / Pro 6h", role: "가장 빠른 엣지 응답", speed: "초고속" },
-  { layer: "L2 KV", ttl: "24h ~ 7일", role: "인기 페이지 장기 보관", speed: "빠름" },
-  { layer: "L3 실제 변환", ttl: "캐시 미스 시", role: "3-Tier Cascading 실행", speed: "일반" },
-];
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
 
 export default function HowItWorks() {
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].howItWorks;
+
+  const tiers = [
+    {
+      id: "tier1",
+      name: t.tier1Title,
+      subtitle: t.tier1Sub,
+      color: "var(--color-cyan-400)",
+      bg: "rgba(34,211,238,0.08)",
+      border: "rgba(34,211,238,0.25)",
+      icon: "⚡",
+      desc: t.tier1Desc,
+      badge: t.tier1Badge,
+    },
+    {
+      id: "tier2",
+      name: t.tier2Title,
+      subtitle: t.tier2Sub,
+      color: "var(--color-indigo-400)",
+      bg: "rgba(99,102,241,0.08)",
+      border: "rgba(99,102,241,0.25)",
+      icon: "🔧",
+      desc: t.tier2Desc,
+      badge: t.tier2Badge,
+    },
+    {
+      id: "tier3",
+      name: t.tier3Title,
+      subtitle: t.tier3Sub,
+      color: "var(--color-purple-400)",
+      bg: "rgba(168,85,247,0.08)",
+      border: "rgba(168,85,247,0.25)",
+      icon: "🌐",
+      desc: t.tier3Desc,
+      badge: t.tier3Badge,
+    },
+  ];
+
+  const cacheRows = [
+    { layer: "L1 Cache API", ttl: "Free 1h / Pro 6h", role: t.l1Role, speed: t.l1Speed },
+    { layer: "L2 KV", ttl: "24h ~ 7d", role: t.l2Role, speed: t.l2Speed },
+    { layer: "L3 Cascading", ttl: "On Cache Miss", role: t.l3Role, speed: t.l3Speed },
+  ];
+
   return (
     <section style={{ padding: "6rem 0" }}>
       <div className="section-wrapper">
         {/* 섹션 헤더 */}
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-          <span className="badge badge-indigo" style={{ marginBottom: "1rem" }}>How It Works</span>
+          <span className="badge badge-indigo" style={{ marginBottom: "1rem" }}>{t.badge}</span>
           <h2 className="section-title" style={{ marginBottom: "1rem" }}>
-            3-Tier Cascading 변환
+            {t.title}
           </h2>
           <p className="section-subtitle">
-            가장 빠르고 저렴한 방법부터 순서대로 시도합니다.
-            캐시 히트 시 CPU 사용량을 70~90% 절약합니다.
+            {t.subtitle}
           </p>
         </div>
 
@@ -152,13 +159,13 @@ export default function HowItWorks() {
         {/* 캐시 전략 테이블 */}
         <div className="glass-card" style={{ padding: "2rem" }}>
           <h3 style={{ fontWeight: 700, fontSize: "1.125rem", marginBottom: "1.25rem", color: "var(--color-slate-50)" }}>
-            🗄️ 다층 캐시 전략 (CPU 70~90% 절약)
+            {t.cacheTitle}
           </h3>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
-                  {["계층", "TTL", "역할", "속도"].map((h) => (
+                  {[t.tableLayer, t.tableTtl, t.tableRole, t.tableSpeed].map((h) => (
                     <th
                       key={h}
                       style={{

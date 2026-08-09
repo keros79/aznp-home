@@ -1,78 +1,83 @@
-import Link from "next/link";
+"use client";
 
-const plans = [
-  {
-    name: "Free Tier",
-    price: "$0",
-    period: "영구 무료",
-    badge: "무키 / 서명 불필요",
-    color: "var(--color-slate-400)",
-    bg: "rgba(100,116,139,0.06)",
-    border: "rgba(100,116,139,0.2)",
-    featured: false,
-    features: [
-      "Tier 1 Cloudflare Native ✅",
-      "Tier 2 경량 자체 변환 ✅",
-      "15 RPM / 1,000 RPD 한도",
-      "Cache API 1시간 TTL",
-      "회원가입 / 로그인 없음",
-    ],
-    cta: { label: "지금 바로 시작", href: "/docs" },
-  },
-  {
-    name: "Pro Agent",
-    price: "$20",
-    period: "USDC 충전 (12,000회)",
-    badge: "⚡ 건당 $0.00166 (약 2.1원)",
-    color: "var(--color-indigo-400)",
-    bg: "rgba(99,102,241,0.08)",
-    border: "rgba(99,102,241,0.4)",
-    featured: true,
-    features: [
-      "Tier 1 + 2 + 3 (JS Rendering) ✅",
-      "Advanced Extraction (+15~30% 절감)",
-      "요약 모드 & max_tokens 제한",
-      "Structured JSON 출력 지원",
-      "Solana Ed25519 서명 무키 인증",
-      "POST /v1/topup 즉시 충전",
-    ],
-    cta: { label: "Solana 충전 안내 보기", href: "/pricing" },
-  },
-  {
-    name: "Enterprise",
-    price: "$100",
-    period: "USDC 충전 (80,000회)",
-    badge: "🚀 건당 $0.00125 (수수료 0.7%)",
-    color: "var(--color-purple-400)",
-    bg: "rgba(168,85,247,0.06)",
-    border: "rgba(168,85,247,0.25)",
-    featured: false,
-    features: [
-      "Pro Agent 기능 전체 포함 ✅",
-      "대규모 에이전트 서비스 전용",
-      "건당 단가 극소화 ($0.00125)",
-      "Solana Ed25519 서명 무키 인증",
-      "우선 처리 큐 지원",
-      "POST /v1/topup 즉시 충전",
-    ],
-    cta: { label: "API 레퍼런스 보기", href: "/docs/api" },
-  },
-];
+import Link from "next/link";
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
 
 export default function PricingPreview() {
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].pricing;
+
+  const plans = [
+    {
+      name: t.freeTitle,
+      price: t.freePrice,
+      period: t.freePeriod,
+      badge: t.freeBadge,
+      color: "var(--color-slate-400)",
+      bg: "rgba(100,116,139,0.06)",
+      border: "rgba(100,116,139,0.2)",
+      featured: false,
+      features: [
+        "Tier 1 Cloudflare Native ✅",
+        "Tier 2 Self Conversion ✅",
+        "15 RPM / 1,000 RPD Limit",
+        "Cache API 1h TTL",
+        "No Signups / Logins",
+      ],
+      cta: { label: t.ctaDocs, href: "/docs" },
+    },
+    {
+      name: t.p1Title,
+      price: t.p1Price,
+      period: t.p1Period,
+      badge: t.p1Badge,
+      color: "var(--color-indigo-400)",
+      bg: "rgba(99,102,241,0.08)",
+      border: "rgba(99,102,241,0.4)",
+      featured: true,
+      features: [
+        "Tier 1 + 2 + 3 (JS Rendering) ✅",
+        "Advanced Extraction (+15~30% Savings)",
+        "Summary mode & max_tokens",
+        "Structured JSON Output",
+        "Solana Ed25519 Stateless Auth",
+        "POST /v1/topup Instant Deposit",
+      ],
+      cta: { label: t.ctaTopup, href: "/pricing" },
+    },
+    {
+      name: t.p2Title,
+      price: t.p2Price,
+      period: t.p2Period,
+      badge: t.p2Badge,
+      color: "var(--color-purple-400)",
+      bg: "rgba(168,85,247,0.06)",
+      border: "rgba(168,85,247,0.25)",
+      featured: false,
+      features: [
+        "All Pro Agent Features Included ✅",
+        "Scale Agent Workloads",
+        "Lowest Per-Req Unit Cost ($0.00125)",
+        "Solana Ed25519 Stateless Auth",
+        "Priority Execution Queue",
+        "POST /v1/topup Instant Deposit",
+      ],
+      cta: { label: t.ctaApi, href: "/docs/api" },
+    },
+  ];
+
   return (
     <section style={{ padding: "6rem 0" }}>
       <div className="section-wrapper">
         {/* 헤더 */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <span className="badge badge-cyan" style={{ marginBottom: "1rem" }}>Solana USDC 요금제</span>
+          <span className="badge badge-cyan" style={{ marginBottom: "1rem" }}>{t.badge}</span>
           <h2 className="section-title" style={{ marginBottom: "1rem" }}>
-            계정 없이 지갑 서명으로 사용하는 요금
+            {t.title}
           </h2>
           <p className="section-subtitle">
-            회원가입, API Key, 비밀번호 관리가 없습니다.
-            <br />
-            Solana 지갑(USDC) 소액 충전으로 에이전트 크레딧을 즉시 사용하세요.
+            {t.subtitle}
           </p>
         </div>
 
@@ -114,7 +119,7 @@ export default function PricingPreview() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  ✨ AI 에이전트 추천
+                  ✨ AI Agent Recommended
                 </div>
               )}
 
@@ -164,7 +169,7 @@ export default function PricingPreview() {
               fontWeight: 500,
             }}
           >
-            Solana 수신 지갑 주소 및 POST /v1/topup 연동 가이드 보기 →
+            {lang === "en" ? "View Solana receiver wallet & POST /v1/topup guide →" : "Solana 수신 지갑 주소 및 POST /v1/topup 연동 가이드 보기 →"}
           </Link>
         </div>
       </div>

@@ -1,61 +1,69 @@
-const features = [
-  {
-    icon: "🪙",
-    color: "var(--color-cyan-400)",
-    bg: "rgba(34,211,238,0.08)",
-    border: "rgba(34,211,238,0.2)",
-    title: "75~90% 토큰 절감",
-    desc: "광고, 네비게이션, CSS/JS, 사이드바를 모두 제거합니다. Pro의 Advanced Extraction은 추가 15~30% 절감.",
-    stats: "평균 1/5 이하 토큰",
-  },
-  {
-    icon: "⚡",
-    color: "var(--color-indigo-400)",
-    bg: "rgba(99,102,241,0.08)",
-    border: "rgba(99,102,241,0.2)",
-    title: "Cloudflare Edge 속도",
-    desc: "전 세계 Cloudflare 엣지에서 서빙. Cache API + KV 다층 캐시로 반복 요청 CPU를 70~90% 절약.",
-    stats: "글로벌 저지연",
-  },
-  {
-    icon: "🌐",
-    color: "var(--color-purple-400)",
-    bg: "rgba(168,85,247,0.08)",
-    border: "rgba(168,85,247,0.2)",
-    title: "범용성",
-    desc: "Cloudflare Markdown for Agents를 지원하지 않는 사이트도 처리. 동적 JS 페이지는 Pro에서 Browser Rendering.",
-    stats: "어떤 사이트든",
-  },
-  {
-    icon: "💰",
-    color: "var(--color-cyan-400)",
-    bg: "rgba(34,211,238,0.06)",
-    border: "rgba(34,211,238,0.18)",
-    title: "비용 효율",
-    desc: "Free Plan으로 기본 기능을 $0에 제공. Pro $19/월로 고급 기능을 과금. Stale-While-Revalidate로 CPU 최적화.",
-    stats: "Free $0 / Pro $19",
-  },
-  {
-    icon: "📊",
-    color: "var(--color-indigo-400)",
-    bg: "rgba(99,102,241,0.06)",
-    border: "rgba(99,102,241,0.18)",
-    title: "토큰 절감 분석",
-    desc: "Pro는 D1 기반 Token Analytics로 월간 절감량을 확인하세요. \"이번 달 $XX 절약\"을 수치로 증명.",
-    stats: "D1 Analytics (Pro)",
-  },
-  {
-    icon: "🔑",
-    color: "var(--color-purple-400)",
-    bg: "rgba(168,85,247,0.06)",
-    border: "rgba(168,85,247,0.18)",
-    title: "유연한 출력",
-    desc: "기본 Markdown, 요약 모드, max_tokens 제한, Structured JSON 출력 지원. RAG 파이프라인에 최적화.",
-    stats: "4가지 출력 모드",
-  },
-];
+"use client";
+
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
 
 export default function Features() {
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].features;
+
+  const featuresList = [
+    {
+      icon: "🪙",
+      color: "var(--color-cyan-400)",
+      bg: "rgba(34,211,238,0.08)",
+      border: "rgba(34,211,238,0.2)",
+      title: t.f1Title,
+      desc: t.f1Desc,
+      stats: t.f1Stats,
+    },
+    {
+      icon: "⚡",
+      color: "var(--color-indigo-400)",
+      bg: "rgba(99,102,241,0.08)",
+      border: "rgba(99,102,241,0.2)",
+      title: t.f2Title,
+      desc: t.f2Desc,
+      stats: t.f2Stats,
+    },
+    {
+      icon: "🌐",
+      color: "var(--color-purple-400)",
+      bg: "rgba(168,85,247,0.08)",
+      border: "rgba(168,85,247,0.2)",
+      title: t.f3Title,
+      desc: t.f3Desc,
+      stats: t.f3Stats,
+    },
+    {
+      icon: "🔑",
+      color: "var(--color-cyan-400)",
+      bg: "rgba(34,211,238,0.06)",
+      border: "rgba(34,211,238,0.18)",
+      title: t.f4Title,
+      desc: t.f4Desc,
+      stats: t.f4Stats,
+    },
+    {
+      icon: "📊",
+      color: "var(--color-indigo-400)",
+      bg: "rgba(99,102,241,0.06)",
+      border: "rgba(99,102,241,0.18)",
+      title: t.f5Title,
+      desc: t.f5Desc,
+      stats: t.f5Stats,
+    },
+    {
+      icon: "⚙️",
+      color: "var(--color-purple-400)",
+      bg: "rgba(168,85,247,0.06)",
+      border: "rgba(168,85,247,0.18)",
+      title: t.f6Title,
+      desc: t.f6Desc,
+      stats: t.f6Stats,
+    },
+  ];
+
   return (
     <section
       style={{
@@ -66,15 +74,14 @@ export default function Features() {
       <div className="section-wrapper">
         {/* 헤더 */}
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-          <span className="badge badge-purple" style={{ marginBottom: "1rem" }}>핵심 기능</span>
+          <span className="badge badge-purple" style={{ marginBottom: "1rem" }}>{t.badge}</span>
           <h2 className="section-title" style={{ marginBottom: "1rem" }}>
-            AI 에이전트를 위해 설계된
+            {t.titleLine1}
             <br />
-            <span className="text-gradient">모든 기능</span>
+            <span className="text-gradient">{t.titleLine2}</span>
           </h2>
           <p className="section-subtitle">
-            단순한 HTML-to-Markdown이 아닙니다.
-            에이전트 워크플로우 전반을 최적화합니다.
+            {t.subtitle}
           </p>
         </div>
 
@@ -83,7 +90,7 @@ export default function Features() {
           style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.25rem" }}
           className="features-grid"
         >
-          {features.map((f) => (
+          {featuresList.map((f) => (
             <div
               key={f.title}
               className="glass-card"

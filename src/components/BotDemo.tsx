@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useDemoStore } from "@/store/demoStore";
 import { convertUrl } from "@/lib/aznpClient";
+import { useI18nStore } from "@/store/i18nStore";
+import { dictionaries } from "@/i18n/dictionaries";
 
 const EXAMPLE_URLS = [
   "https://news.ycombinator.com",
@@ -13,22 +15,24 @@ const EXAMPLE_URLS = [
 
 const sourceLabels: Record<string, string> = {
   "cloudflare-native": "Cloudflare Native ⚡",
-  "aznp-self": "AZNP 자체 변환 🔧",
+  "aznp-self": "AZNP Self-Converted 🔧",
   "browser-rendering": "Browser Rendering 🌐",
-  cache: "Cache 히트 🗄️",
-  kv: "KV 캐시 🗄️",
+  cache: "Cache HIT 🗄️",
+  kv: "KV Cache 🗄️",
 };
 
 export default function BotDemo() {
   const { inputUrl, setInputUrl, result, setResult, setError, error } = useDemoStore();
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [apiKey, setApiKey] = useState("");
+  const [showWallet, setShowWallet] = useState(false);
+  const [walletAddr, setWalletAddr] = useState("");
+  const { lang } = useI18nStore();
+  const t = dictionaries[lang].demo;
 
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
       convertUrl({
         url: inputUrl,
-        apiKey: apiKey || undefined,
+        apiKey: walletAddr || undefined,
       }),
     onSuccess: (data) => {
       setResult(data);
@@ -59,12 +63,12 @@ export default function BotDemo() {
       <div className="section-wrapper">
         {/* 헤더 */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <span className="badge badge-indigo" style={{ marginBottom: "1rem" }}>Live Demo</span>
+          <span className="badge badge-indigo" style={{ marginBottom: "1rem" }}>{t.badge}</span>
           <h2 className="section-title" style={{ marginBottom: "1rem" }}>
-            직접 체험해보세요
+            {t.title}
           </h2>
           <p className="section-subtitle">
-            URL을 입력하면 AZNP가 실시간으로 Markdown으로 변환합니다.
+            {t.subtitle}
           </p>
         </div>
 
@@ -74,7 +78,7 @@ export default function BotDemo() {
         >
           {/* 예시 URL */}
           <div style={{ marginBottom: "1.25rem", display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-            <span style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginRight: "0.25rem" }}>예시:</span>
+            <span style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginRight: "0.25rem" }}>{t.exampleLabel}</span>
             {EXAMPLE_URLS.map((url) => (
               <button
                 key={url}
@@ -90,8 +94,6 @@ export default function BotDemo() {
                   fontFamily: "var(--font-mono)",
                   transition: "background var(--duration-fast) ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(99,102,241,0.1)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 {url.replace("https://", "")}
               </button>
@@ -105,7 +107,7 @@ export default function BotDemo() {
                 id="demo-url-input"
                 type="url"
                 className="input-field"
-                placeholder="https://example.com/article"
+                placeholder={t.urlPlaceholder}
                 value={inputUrl}
                 onChange={(e) => setInputUrl(e.target.value)}
                 required
@@ -134,19 +136,19 @@ export default function BotDemo() {
                         animation: "spin 0.7s linear infinite",
                       }}
                     />
-                    변환 중...
+                    {t.converting}
                   </>
                 ) : (
-                  "→ 변환"
+                  t.convertBtn
                 )}
               </button>
             </div>
 
-            {/* Pro API Key 입력 토글 */}
+            {/* Solana Wallet 토글 */}
             <div>
               <button
                 type="button"
-                onClick={() => setShowApiKey(!showApiKey)}
+                onClick={() => setShowWallet(!showWallet)}
                 style={{
                   fontSize: "0.8rem",
                   color: "var(--color-slate-400)",
@@ -159,17 +161,17 @@ export default function BotDemo() {
                   gap: "0.375rem",
                 }}
               >
-                <span>{showApiKey ? "▼" : "▶"}</span>
-                Pro API Key 사용하기 (선택)
+                <span>{showWallet ? "▼" : "▶"}</span>
+                {t.solanaWalletToggle}
               </button>
-              {showApiKey && (
+              {showWallet && (
                 <input
-                  id="demo-apikey-input"
-                  type="password"
+                  id="demo-wallet-input"
+                  type="text"
                   className="input-field"
-                  placeholder="aznp_pro_xxxxxxxxxxxxxxxx"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder={t.walletPlaceholder}
+                  value={walletAddr}
+                  onChange={(e) => setWalletAddr(e.target.value)}
                   style={{ marginTop: "0.5rem" }}
                 />
               )}
@@ -206,7 +208,7 @@ export default function BotDemo() {
                 }}
               >
                 <span className={`badge badge-${result.plan === "pro" ? "purple" : "indigo"}`}>
-                  {result.plan === "pro" ? "🔑 Pro" : "✅ Free"}
+                  {result.plan === "pro" ? "🔑 Pro Agent" : "✅ Free"}
                 </span>
                 <span className="badge badge-cyan">
                   {sourceLabels[result.source] ?? result.source}
@@ -221,7 +223,7 @@ export default function BotDemo() {
                     border: `1px solid ${result.cacheStatus === "HIT" ? "rgba(34,197,94,0.3)" : "rgba(100,116,139,0.2)"}`,
                   }}
                 >
-                  Cache: {result.cacheStatus}
+                  {t.cacheStatus} {result.cacheStatus}
                 </span>
                 {result.tokenReduction !== "–" && (
                   <span className="badge badge-indigo">
@@ -230,11 +232,11 @@ export default function BotDemo() {
                 )}
                 {result.markdownTokens !== "–" && (
                   <span style={{ fontSize: "0.8125rem", color: "var(--color-slate-400)", padding: "0.25rem 0.75rem" }}>
-                    Tokens: {result.markdownTokens}
+                    {t.tokens} {result.markdownTokens}
                   </span>
                 )}
                 <span style={{ fontSize: "0.8125rem", color: "var(--color-slate-500)", padding: "0.25rem 0.75rem" }}>
-                  Remaining: {result.rateLimitRemaining}
+                  {t.remaining} {result.rateLimitRemaining}
                 </span>
               </div>
 
