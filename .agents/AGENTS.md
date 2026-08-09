@@ -62,6 +62,10 @@ public/
   llms.txt
 ```
 
+## 배포 규칙
+- **배포 전 사용자 승인 필수**: `npm run deploy`, `wrangler pages deploy`, `wrangler deploy` 등 프로덕션 환경으로 배포하는 모든 명령어/작업은 **반드시 사용자에게 사전에 변경 사항을 설명하고 명시적 승인을 얻은 후에만 실행**해야 합니다.
+- 승인 없이 임의로 배포 명령어를 실행하지 말 것.
+
 ## 코딩 컨벤션
 - TypeScript strict 모드 유지.
 - `any` 타입 사용 금지.

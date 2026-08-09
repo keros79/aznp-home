@@ -2,40 +2,41 @@ import Link from "next/link";
 
 const plans = [
   {
-    name: "Free",
+    name: "Free Tier",
     price: "$0",
     period: "영구 무료",
+    badge: "계정 / Key 불필요",
     color: "var(--color-slate-400)",
     bg: "rgba(100,116,139,0.06)",
     border: "rgba(100,116,139,0.2)",
     featured: false,
     features: [
       "Tier 1 Cloudflare Native ✅",
-      "Tier 2 경량 변환 ✅",
-      "15 RPM / 1,000 RPD",
-      "Cache TTL 1시간",
-      "기본 응답 헤더",
+      "Tier 2 경량 자체 변환 ✅",
+      "15 RPM / 1,000 RPD 한도",
+      "Cache API 1시간 TTL",
+      "회원가입 / 로그인 없음",
     ],
-    cta: { label: "무료로 시작", href: "/docs" },
+    cta: { label: "지금 바로 시작", href: "/docs" },
   },
   {
-    name: "Pro",
-    price: "$19",
-    period: "/ 월",
+    name: "Pay-per-request (x402)",
+    price: "~$0.01",
+    period: "/ 건당",
+    badge: "⚡ AI 에이전트 전용 (USDC)",
     color: "var(--color-indigo-400)",
     bg: "rgba(99,102,241,0.08)",
     border: "rgba(99,102,241,0.4)",
     featured: true,
     features: [
       "Tier 1 + 2 + 3 (JS Rendering) ✅",
-      "Advanced Extraction (+15~30%)",
-      "120 RPM / 20,000 RPD",
-      "Cache TTL 6h + SWR",
-      "요약 / max_tokens / JSON 출력",
-      "Token Analytics (D1)",
-      "이메일 우선 지원",
+      "Advanced Extraction (+15~30% 절감)",
+      "요약 모드 (mode=summary)",
+      "max_tokens 및 Structured JSON",
+      "계정 / API Key 불필요 (x402 헤더)",
+      "x402 프로토콜 지갑 자동 결제",
     ],
-    cta: { label: "Pro 시작하기", href: "/pricing" },
+    cta: { label: "x402 연동가이드 보기", href: "/docs/api" },
   },
 ];
 
@@ -45,12 +46,14 @@ export default function PricingPreview() {
       <div className="section-wrapper">
         {/* 헤더 */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <span className="badge badge-cyan" style={{ marginBottom: "1rem" }}>요금제</span>
+          <span className="badge badge-cyan" style={{ marginBottom: "1rem" }}>x402 요금제</span>
           <h2 className="section-title" style={{ marginBottom: "1rem" }}>
-            간단하고 투명한 요금
+            계정 없이 즉시 사용하는 요금
           </h2>
           <p className="section-subtitle">
-            무료로 시작하고, 필요할 때 업그레이드하세요.
+            회원가입과 API Key 관리가 없습니다.
+            <br />
+            무료로 시작하고, 에이전트 고급 기능은 x402(USDC)로 건당 결제하세요.
           </p>
         </div>
 
@@ -60,7 +63,7 @@ export default function PricingPreview() {
             display: "grid",
             gridTemplateColumns: "repeat(2, 1fr)",
             gap: "1.5rem",
-            maxWidth: "800px",
+            maxWidth: "820px",
             margin: "0 auto 2.5rem",
           }}
           className="pricing-preview-grid"
@@ -92,13 +95,16 @@ export default function PricingPreview() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  ✨ 가장 인기
+                  ✨ AI 에이전트 추천
                 </div>
               )}
 
               <div style={{ marginBottom: "1.5rem" }}>
-                <div style={{ fontWeight: 700, fontSize: "1rem", color: plan.color, marginBottom: "0.5rem" }}>
+                <div style={{ fontWeight: 700, fontSize: "1.05rem", color: plan.color, marginBottom: "0.25rem" }}>
                   {plan.name}
+                </div>
+                <div style={{ fontSize: "0.78rem", color: "var(--color-slate-400)", marginBottom: "0.75rem" }}>
+                  {plan.badge}
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.25rem" }}>
                   <span style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--color-slate-50)", letterSpacing: "-0.04em" }}>
@@ -139,13 +145,13 @@ export default function PricingPreview() {
               fontWeight: 500,
             }}
           >
-            Team / Business 플랜 및 상세 기능 비교 보기 →
+            상세 x402 연동 방식 및 에이전트 프레임워크 예시 보기 →
           </Link>
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 560px) {
+        @media (max-width: 640px) {
           .pricing-preview-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
