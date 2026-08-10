@@ -57,6 +57,45 @@ export default function DocsPage() {
         </div>
       </section>
 
+      {/* AI 에이전트 지갑 생성 & 자동 결제 가이드 */}
+      <section style={{ marginBottom: "2.5rem" }}>
+        <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "0.5rem", color: "var(--color-slate-50)" }}>
+          {t.walletTitle}
+        </h2>
+        <p style={{ fontSize: "0.9375rem", color: "var(--color-slate-400)", marginBottom: "1.25rem", lineHeight: 1.7 }}>
+          {t.walletSub}
+        </p>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div className="glass-card" style={{ padding: "1.25rem", borderLeft: "3px solid var(--color-cyan-400)" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-cyan-400)", marginBottom: "0.5rem" }}>
+              {t.walletMethod1Title}
+            </div>
+            <div style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", lineHeight: 1.7 }}>
+              {t.walletMethod1Desc}
+            </div>
+          </div>
+
+          <div className="glass-card" style={{ padding: "1.25rem", borderLeft: "3px solid var(--color-indigo-400)" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-indigo-400)", marginBottom: "0.5rem" }}>
+              {t.walletMethod2Title}
+            </div>
+            <div style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", lineHeight: 1.7 }}>
+              {t.walletMethod2Desc}
+            </div>
+          </div>
+
+          <div className="glass-card" style={{ padding: "1.25rem", borderLeft: "3px solid var(--color-purple-400)", background: "rgba(168,85,247,0.04)" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-purple-400)", marginBottom: "0.5rem" }}>
+              {t.autoTopupTitle}
+            </div>
+            <div style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", lineHeight: 1.7 }}>
+              {t.autoTopupDesc}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 핵심 개념 */}
       <section style={{ marginBottom: "2.5rem" }}>
         <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "1.25rem", color: "var(--color-slate-50)" }}>

@@ -184,7 +184,7 @@ export default function PricingPage() {
         </div>
 
         {/* 충전 API 안내 */}
-        <div style={{ maxWidth: "840px", margin: "0 auto 5rem" }}>
+        <div style={{ maxWidth: "840px", margin: "0 auto 3rem" }}>
           <h2 style={{ fontWeight: 800, fontSize: "1.375rem", marginBottom: "1.25rem", color: "var(--color-slate-50)", textAlign: "center" }}>
             {t.topupTitle}
           </h2>
@@ -200,6 +200,21 @@ export default function PricingPage() {
                 -d <span style={{ color: "var(--color-indigo-400)" }}>&apos;{"{"}&quot;wallet&quot;: &quot;7xKX...SolanaPublicKey&quot;, &quot;tx_hash&quot;: &quot;5K...SolanaTxHash&quot;{"}"}&apos;</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* AI 에이전트 자율 지갑 생성 & 자동 결제 가이드 카드 */}
+        <div style={{ maxWidth: "840px", margin: "0 auto 5rem" }}>
+          <div className="glass-card" style={{ padding: "1.75rem", border: "1px solid rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.05)" }}>
+            <h3 style={{ fontWeight: 700, fontSize: "1.125rem", color: "var(--color-purple-300)", marginBottom: "0.75rem" }}>
+              {t.agentAutoPayTitle}
+            </h3>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", lineHeight: 1.7, marginBottom: "1.25rem" }}>
+              {t.agentAutoPaySub}
+            </p>
+            <Link href="/docs/api" className="btn-primary" style={{ fontSize: "0.875rem", padding: "0.5rem 1rem", display: "inline-flex" }}>
+              {t.agentAutoPayBtn}
+            </Link>
           </div>
         </div>
 

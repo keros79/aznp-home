@@ -130,3 +130,34 @@ async function fetchCleanMarkdown(targetUrl) {
   return markdown;
 }
 ```
+
+---
+
+## 6. Programmatic Wallet Generation & HTTP 402 Auto-Topup Workflow
+
+AI Agents can operate completely autonomously by generating keypairs programmatically and auto-topping up USDC when HTTP 402 (Payment Required) is encountered.
+
+### 6.1 Keypair Generation (Node.js `@solana/web3.js`)
+```javascript
+import { Keypair } from '@solana/web3.js';
+import bs58 from 'bs58';
+
+const agentKeypair = Keypair.generate();
+console.log("Public Key:", agentKeypair.publicKey.toBase58());
+console.log("Secret Key (Base58):", bs58.encode(agentKeypair.secretKey));
+```
+
+### 6.2 HTTP 402 Auto-Topup Handler Pattern
+```javascript
+async function fetchWithAutoTopup(targetUrl) {
+  let response = await fetchCleanMarkdown(targetUrl);
+  if (response === null) { // 402 Insufficient credits
+    console.log("Executing auto-topup...");
+    // 1. Send $20 USDC transfer to AZNP recipient wallet via Solana Web3 SDK
+    // 2. Post tx_hash to https://aznp-proxy.kerberos79.workers.dev/v1/topup
+    // 3. Retry fetchCleanMarkdown(targetUrl)
+  }
+  return response;
+}
+```
+

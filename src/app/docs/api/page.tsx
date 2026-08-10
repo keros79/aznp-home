@@ -74,6 +74,49 @@ async function callAZNPProxy(targetUrl) {
   return markdown;
 }`;
 
+  const walletAndAutoTopupExample = `// 1. Programmatic Solana Keypair Generation (Node.js)
+import { Keypair } from '@solana/web3.js';
+import bs58 from 'bs58';
+
+// Create a new keypair programmatically for AI Agent
+const agentKeypair = Keypair.generate();
+const secretKeyBase58 = bs58.encode(agentKeypair.secretKey);
+const publicKeyBase58 = agentKeypair.publicKey.toBase58();
+
+console.log("Agent Public Key:", publicKeyBase58);
+console.log("Agent Secret Key (Store securely in .env):", secretKeyBase58);
+
+// 2. HTTP 402 Auto-Payment Handler Pattern
+async function fetchWithAutoTopup(targetUrl) {
+  let res = await callAZNPProxy(targetUrl);
+  
+  // Detect 402 Payment Required (Insufficient credits)
+  if (res && res.status === 402) {
+    const paymentInfo = await res.json();
+    console.warn("HTTP 402 Payment Required received. Executing automated USDC topup...");
+    
+    // Step 2a: Send $20 USDC via Solana SDK to recipient wallet
+    const txHash = await executeUsdcTransfer({
+      fromKeypair: agentKeypair,
+      toAddress: paymentInfo.receiver_wallet || "RECEIVER_SOLANA_WALLET",
+      amountUsdc: 20.0
+    });
+    
+    // Step 2b: Submit transaction hash to AZNP credit topup endpoint
+    const topupRes = await fetch("https://aznp-proxy.kerberos79.workers.dev/v1/topup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wallet: publicKeyBase58, tx_hash: txHash })
+    });
+    
+    if (topupRes.ok) {
+      console.log("Auto-topup successful! Resuming original request...");
+      return await callAZNPProxy(targetUrl); // Retry request
+    }
+  }
+  return res;
+}`;
+
   return (
     <article>
       {/* 헤더 */}
@@ -218,6 +261,16 @@ async function callAZNPProxy(targetUrl) {
         </h2>
         <div className="code-block" style={{ whiteSpace: "pre-wrap", fontFamily: "var(--font-mono)", fontSize: "0.85rem", lineHeight: 1.7 }}>
           {formattedCodeExample}
+        </div>
+      </section>
+
+      {/* 지갑 생성 및 자동 결제 코드 예시 */}
+      <section style={{ marginBottom: "2.5rem" }}>
+        <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "1.25rem", color: "var(--color-slate-50)" }}>
+          {t.walletCodeTitle}
+        </h2>
+        <div className="code-block" style={{ whiteSpace: "pre-wrap", fontFamily: "var(--font-mono)", fontSize: "0.85rem", lineHeight: 1.7 }}>
+          {walletAndAutoTopupExample}
         </div>
       </section>
     </article>
