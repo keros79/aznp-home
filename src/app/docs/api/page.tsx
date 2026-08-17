@@ -135,13 +135,13 @@ async function fetchWithAutoTopup(targetUrl) {
         <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "1rem", color: "var(--color-slate-50)" }}>
           {t.endpointTitle}
         </h2>
-        <div className="code-block">
+        <div className="code-block" style={{ wordBreak: "break-all" }}>
           <span style={{ color: "var(--color-cyan-400)" }}>GET</span>{" "}
           <span style={{ color: "var(--color-indigo-400)" }}>
             https://aznp-proxy.kerberos79.workers.dev/
           </span>
           <span style={{ color: "var(--color-slate-500)" }}>?url=</span>
-          <span style={{ color: "var(--color-purple-400)" }}>{"{target_url}"}</span>
+          <span style={{ color: "var(--color-purple-400)" }}>{"{"}target_url{"}"}</span>
         </div>
       </section>
 
@@ -155,8 +155,8 @@ async function fetchWithAutoTopup(targetUrl) {
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
           {authHeaders.map((h) => (
-            <div key={h.name} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "0.75rem 1rem", borderRadius: "0.5rem", background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.15)" }}>
-              <code style={{ fontFamily: "var(--font-mono)", color: "var(--color-indigo-400)", fontSize: "0.825rem", flexShrink: 0, minWidth: "180px" }}>
+            <div key={h.name} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", alignItems: "flex-start", padding: "0.75rem 1rem", borderRadius: "0.5rem", background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.15)" }}>
+              <code style={{ fontFamily: "var(--font-mono)", color: "var(--color-indigo-400)", fontSize: "0.825rem", flexShrink: 0, wordBreak: "break-all" }}>
                 {h.name}
               </code>
               <span style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", lineHeight: 1.6 }}>{h.desc}</span>
@@ -200,8 +200,8 @@ async function fetchWithAutoTopup(targetUrl) {
         <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "1rem", color: "var(--color-slate-50)" }}>
           {t.queryParamsTitle}
         </h2>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
+        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          <table style={{ width: "100%", minWidth: "540px", borderCollapse: "collapse", fontSize: "0.875rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
                 {[t.colParam, t.colReq, t.colType, t.colDesc].map((h) => (
@@ -244,8 +244,8 @@ async function fetchWithAutoTopup(targetUrl) {
         </h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
           {responseHeaders.map((h) => (
-            <div key={h.name} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "0.75rem 1rem", borderRadius: "0.5rem", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(99,102,241,0.08)" }}>
-              <code style={{ fontFamily: "var(--font-mono)", color: "var(--color-cyan-400)", fontSize: "0.825rem", flexShrink: 0, minWidth: "200px" }}>
+            <div key={h.name} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", alignItems: "flex-start", padding: "0.75rem 1rem", borderRadius: "0.5rem", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(99,102,241,0.08)" }}>
+              <code style={{ fontFamily: "var(--font-mono)", color: "var(--color-cyan-400)", fontSize: "0.825rem", flexShrink: 0, wordBreak: "break-all" }}>
                 {h.name}
               </code>
               <span style={{ fontSize: "0.875rem", color: "var(--color-slate-400)", lineHeight: 1.6 }}>{h.desc}</span>

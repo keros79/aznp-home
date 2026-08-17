@@ -16,7 +16,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div
-      style={{ display: "flex", minHeight: "calc(100vh - 4rem)" }}
+      style={{ display: "flex", minHeight: "calc(100vh - 4rem)", overflowX: "hidden" }}
       className="docs-container"
     >
       {/* 사이드바 */}
@@ -51,14 +51,15 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* 본문 */}
-      <main style={{ flex: 1, padding: "2.5rem 3rem", maxWidth: "900px" }} className="docs-main">
+      <main style={{ flex: 1, padding: "2.5rem 3rem", maxWidth: "900px", minWidth: 0 }} className="docs-main">
         {children}
       </main>
 
       <style>{`
         @media (max-width: 768px) {
           .docs-sidebar { display: none !important; }
-          .docs-main { padding: 1.5rem !important; }
+          .docs-main { padding: 1.5rem !important; max-width: 100% !important; }
+          .docs-container { overflow-x: hidden !important; }
         }
       `}</style>
     </div>
