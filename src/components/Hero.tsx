@@ -10,6 +10,7 @@ export default function Hero() {
 
   return (
     <section
+      className="hero-section"
       style={{
         position: "relative",
         padding: "7rem 0 6rem",
@@ -34,7 +35,7 @@ export default function Hero() {
           top: "10%",
           left: "50%",
           transform: "translateX(-50%)",
-          width: "600px",
+          width: "min(600px, 100%)",
           height: "400px",
           background:
             "radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, rgba(168,85,247,0.12) 40%, transparent 70%)",
@@ -131,6 +132,8 @@ export default function Hero() {
               color: "var(--color-slate-200)",
               margin: 0,
               overflowX: "auto",
+              wordBreak: "break-all",
+              overflowWrap: "break-word",
             }}
           >
             <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentFree}</span>{"\n"}
@@ -163,6 +166,7 @@ export default function Hero() {
           ].map(({ value, label }) => (
             <div key={label} style={{ textAlign: "center" }}>
               <div
+                className="stat-value-mobile"
                 style={{
                   fontSize: "1.875rem",
                   fontWeight: 800,

@@ -21,26 +21,10 @@ export default function Nav() {
   ];
 
   return (
-    <header
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-        borderBottom: "1px solid var(--color-border)",
-        background: "rgba(10, 10, 15, 0.85)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-      }}
-    >
-      <div
-        className="section-wrapper"
-        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "4rem" }}
-      >
+    <header className="nav-header">
+      <div className="section-wrapper nav-row">
         {/* Logo */}
-        <Link
-          href="/"
-          style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}
-        >
+        <Link href="/" className="nav-logo">
           <span
             style={{
               width: "2rem",
@@ -70,8 +54,8 @@ export default function Nav() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav style={{ display: "flex", gap: "0.25rem", alignItems: "center" }} className="hidden sm:flex">
+        {/* Desktop nav — display는 .nav-desktop 이 제어 */}
+        <nav className="nav-desktop">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
@@ -92,55 +76,34 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* CTA & Language Switcher */}
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+        {/* 우측: Language Switcher + 햄버거(모바일) */}
+        <div className="nav-actions">
           <LanguageSwitcher />
-          <Link href="/pricing" className="btn-primary" style={{ padding: "0.45rem 1.125rem", fontSize: "0.875rem" }}>
-            {t.cta}
-          </Link>
-          {/* 모바일 햄버거 */}
+
+          {/* 햄버거 버튼: 데스크탑에서 숨김 (.nav-toggle) */}
           <button
-            className="sm:hidden"
+            type="button"
+            className="nav-toggle"
             onClick={() => setMenuOpen(!menuOpen)}
-            style={{
-              background: "none",
-              border: "1px solid var(--color-border)",
-              borderRadius: "0.5rem",
-              padding: "0.375rem 0.625rem",
-              cursor: "pointer",
-              color: "var(--color-slate-400)",
-              fontSize: "1.1rem",
-            }}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             {menuOpen ? "✕" : "☰"}
           </button>
         </div>
       </div>
 
-      {/* 모바일 메뉴 */}
+      {/* 모바일 드롭다운 메뉴 — display는 .nav-mobile-menu 가 제어 */}
       {menuOpen && (
-        <div
-          style={{
-            borderTop: "1px solid var(--color-border)",
-            padding: "1rem 1.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.25rem",
-          }}
-          className="sm:hidden"
-        >
+        <div id="mobile-menu" className="nav-mobile-menu">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
+              className="nav-mobile-link"
               onClick={() => setMenuOpen(false)}
               style={{
-                padding: "0.625rem 0.875rem",
-                borderRadius: "0.5rem",
-                fontSize: "0.95rem",
-                fontWeight: 500,
-                textDecoration: "none",
                 color: pathname === href ? "var(--color-indigo-400)" : "var(--color-slate-300)",
                 background: pathname === href ? "rgba(99,102,241,0.1)" : "transparent",
               }}

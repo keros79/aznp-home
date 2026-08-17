@@ -54,6 +54,12 @@
 
 html {
   scroll-behavior: smooth;
+  /*
+   * 루트에 overflow-x(hidden/clip)를 걸지 않는다.
+   * iOS Safari에서 루트를 클리핑하면 position:sticky 요소의 히트 테스트 영역이
+   * 스크롤 오프셋 0 위치에 고정돼, 화면 상단에 붙어 보이는 헤더가 터치를 못 받는다.
+   * 가로 오버플로는 각 섹션에서 차단한다(Hero: overflow:hidden, 글로우: min(600px,100%)).
+   */
 }
 
 body {
@@ -298,6 +304,106 @@ body {
   color: var(--color-slate-200);
 }
 
+/* ─── 상단 내비게이션 ─── */
+/*
+ * sticky 헤더에는 backdrop-filter를 쓰지 않는다.
+ * WebKit에서 backdrop-filter가 만드는 합성 레이어는 pointer-events:none 이어도
+ * 히트 테스트를 흡수하는 사례가 있어, 내부 버튼이 터치를 못 받는다.
+ * 페이지 배경(#0a0a0f)과 거의 같은 색이라 불투명 배경으로 바꿔도 외형 차이는 미미하다.
+ */
+.nav-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(10, 10, 15, 0.96);
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+  /*
+   * 행이 넘치면 오른쪽 버튼 묶음이 화면 밖으로 밀려 터치 불가가 된다.
+   * 로고/버튼은 절대 줄지 않게 고정하고, 줄어드는 건 가운데 링크 묶음만.
+   */
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* 데스크탑 링크 묶음 — 모바일에서 숨김 */
+.nav-desktop {
+  display: none;
+  gap: 0.25rem;
+  align-items: center;
+  min-width: 0;
+}
+
+/* 햄버거 버튼 — 최소 44×44px 터치 영역 (Apple HIG 권장) */
+.nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  color: var(--color-slate-400);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  /*
+   * touch-action / -webkit-tap-highlight-color 를 지정하지 않는다.
+   * viewport meta 에 width=device-width 가 있으면 최신 Chrome/Safari 에는
+   * 300ms 탭 딜레이가 없어 manipulation 이 불필요하고,
+   * 기본 탭 하이라이트는 탭이 실제로 먹었는지 보여주는 피드백이라 남겨둔다.
+   */
+}
+
+.nav-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-top: 1px solid var(--color-border);
+  padding: 1rem;
+}
+
+.nav-mobile-link {
+  display: block;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+@media (min-width: 640px) {
+  .nav-desktop {
+    display: flex;
+  }
+  .nav-toggle,
+  .nav-mobile-menu {
+    display: none;
+  }
+}
+
 /* ─── 문서 산문 스타일 ─── */
 .docs-prose h1, .docs-prose h2, .docs-prose h3 {
   color: var(--color-slate-50);
@@ -317,4 +423,35 @@ body {
 }
 .docs-nav-link:hover {
   background: rgba(99, 102, 241, 0.08);
+}
+
+/* ─── 모바일 전용 반응형 (≤ 640px) ─── */
+/* 데스크탑(641px+) 및 태블릿에는 영향 없음 */
+@media (max-width: 640px) {
+  /* 섹션 좌우 패딩 축소 */
+  .section-wrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Hero 섹션 패딩 축소 */
+  .hero-section {
+    padding-top: 4rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  /* 글래스 카드 내부 패딩 축소 */
+  .glass-card-mobile-sm {
+    padding: 1.25rem !important;
+  }
+
+  /* BotDemo 카드 패딩 축소 */
+  .demo-card-mobile {
+    padding: 1.25rem !important;
+  }
+
+  /* 통계 수치 크기 축소 */
+  .stat-value-mobile {
+    font-size: 1.5rem !important;
+  }
 }
