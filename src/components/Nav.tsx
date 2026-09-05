@@ -18,6 +18,7 @@ export default function Nav() {
     { href: "/pricing", label: t.pricing },
     { href: "/docs", label: t.docs },
     { href: "/docs/api", label: t.api },
+    { href: "/about", label: t.about },
   ];
 
   return (

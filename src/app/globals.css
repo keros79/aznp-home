@@ -270,6 +270,56 @@ body {
   border-radius: 3px;
 }
 
+/* ─── About 이메일 링크 ─── */
+.about-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  color: var(--color-indigo-400);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-decoration: none;
+  /* 주소는 한 덩어리로 읽혀야 하므로 좁은 화면에서도 쪼개지 않는다 */
+  white-space: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+  transition: border-color var(--duration-fast) ease,
+              background var(--duration-fast) ease;
+}
+.about-email:hover {
+  border-color: var(--color-border-hover);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+/* ─── 기술 스택 칩 (아웃라인) ─── */
+/*
+ * 기술명만 나열하는 칩. 칩 자체는 줄바꿈되지 않고, 넘치면 다음 줄로 넘어간다.
+ * (칩이 여러 줄로 쌓이는 게 정상인 태그 목록이라 .chip-row 의 가로 스크롤은 쓰지 않는다)
+ */
+.tech-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--color-slate-200);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: border-color var(--duration-fast) ease,
+              color var(--duration-fast) ease;
+}
+.tech-chip:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-slate-50);
+}
+
 /* ─── 정의 행 (코드 라벨 + 설명) ─── */
 .def-row {
   display: flex;

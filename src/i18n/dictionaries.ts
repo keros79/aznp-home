@@ -5,7 +5,15 @@ export const dictionaries = {
       pricing: "Pricing",
       docs: "Docs",
       api: "API",
+      about: "About",
       cta: "Get Started Free",
+    },
+    about: {
+      badge: "About",
+      role: "App & Web Hybrid Developer",
+      techTitle: "Tech Stack",
+      frontend: "Frontend",
+      backend: "Backend",
     },
     hero: {
       badge: "v2.1 · Cloudflare Edge",
@@ -200,7 +208,15 @@ export const dictionaries = {
       pricing: "요금",
       docs: "문서",
       api: "API",
+      about: "소개",
       cta: "무료로 시작",
+    },
+    about: {
+      badge: "개발자 소개",
+      role: "앱, 웹 하이브리드 개발자",
+      techTitle: "기술 스택",
+      frontend: "프론트엔드",
+      backend: "백엔드",
     },
     hero: {
       badge: "v2.1 · Cloudflare Edge",
