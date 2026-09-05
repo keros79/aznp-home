@@ -73,7 +73,7 @@ export default function Footer() {
             <p style={{ fontSize: "0.9rem", color: "var(--color-slate-400)", lineHeight: 1.7, maxWidth: "280px" }}>
               {t.brandDesc}
             </p>
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
+            <div className="chip-row" style={{ gap: "0.5rem", marginTop: "1.25rem" }}>
               <span className="badge badge-indigo">Cloudflare Edge</span>
               <span className="badge badge-cyan">v2.1</span>
             </div>

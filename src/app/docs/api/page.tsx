@@ -155,8 +155,8 @@ async function fetchWithAutoTopup(targetUrl) {
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
           {authHeaders.map((h) => (
-            <div key={h.name} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", alignItems: "flex-start", padding: "0.75rem 1rem", borderRadius: "0.5rem", background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.15)" }}>
-              <code style={{ fontFamily: "var(--font-mono)", color: "var(--color-indigo-400)", fontSize: "0.825rem", flexShrink: 0, wordBreak: "break-all" }}>
+            <div key={h.name} className="def-row" style={{ background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.15)" }}>
+              <code className="nowrap-scroll" style={{ fontFamily: "var(--font-mono)", color: "var(--color-indigo-400)", fontSize: "0.825rem", flexShrink: 0 }}>
                 {h.name}
               </code>
               <span style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", lineHeight: 1.6 }}>{h.desc}</span>
@@ -244,8 +244,8 @@ async function fetchWithAutoTopup(targetUrl) {
         </h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
           {responseHeaders.map((h) => (
-            <div key={h.name} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", alignItems: "flex-start", padding: "0.75rem 1rem", borderRadius: "0.5rem", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(99,102,241,0.08)" }}>
-              <code style={{ fontFamily: "var(--font-mono)", color: "var(--color-cyan-400)", fontSize: "0.825rem", flexShrink: 0, wordBreak: "break-all" }}>
+            <div key={h.name} className="def-row" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(99,102,241,0.08)" }}>
+              <code className="nowrap-scroll" style={{ fontFamily: "var(--font-mono)", color: "var(--color-cyan-400)", fontSize: "0.825rem", flexShrink: 0 }}>
                 {h.name}
               </code>
               <span style={{ fontSize: "0.875rem", color: "var(--color-slate-400)", lineHeight: 1.6 }}>{h.desc}</span>

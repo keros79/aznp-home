@@ -128,7 +128,7 @@ export default function PricingPreview() {
                 <div style={{ fontWeight: 700, fontSize: "1.05rem", color: plan.color, marginBottom: "0.25rem" }}>
                   {plan.name}
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--color-slate-400)", marginBottom: "0.75rem" }}>
+                <div className="nowrap-scroll" style={{ fontSize: "0.75rem", color: "var(--color-slate-400)", marginBottom: "0.75rem" }}>
                   {plan.badge}
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.25rem" }}>

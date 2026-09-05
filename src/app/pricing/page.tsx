@@ -143,7 +143,7 @@ export default function PricingPage() {
 
               <div style={{ marginBottom: "1.25rem" }}>
                 <div style={{ fontWeight: 700, fontSize: "1rem", color: plan.color }}>{plan.name}</div>
-                <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.75rem" }}>{plan.target}</div>
+                <div className="nowrap-scroll" style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginBottom: "0.75rem" }}>{plan.target}</div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.25rem" }}>
                   <span style={{ fontSize: "2.25rem", fontWeight: 800, color: "var(--color-slate-50)", letterSpacing: "-0.04em" }}>
                     {plan.price}
@@ -156,14 +156,14 @@ export default function PricingPage() {
 
               <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 {plan.features.map((f) => (
-                  <li key={f.label} style={{ fontSize: "0.825rem", display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+                  <li key={f.label} style={{ fontSize: "0.825rem", display: "flex", gap: "0.5rem", alignItems: "flex-start", minWidth: 0 }}>
                     <span style={{ color: f.yes ? "#4ade80" : "var(--color-slate-600)", flexShrink: 0, marginTop: "1px" }}>
                       {f.yes ? "✓" : "✕"}
                     </span>
-                    <span style={{ color: f.yes ? "var(--color-slate-300)" : "var(--color-slate-500)" }}>
+                    <span style={{ color: f.yes ? "var(--color-slate-300)" : "var(--color-slate-500)", minWidth: 0 }}>
                       {f.label}
                       {f.note && (
-                        <span style={{ color: f.yes ? "var(--color-indigo-400)" : "var(--color-slate-500)", marginLeft: "0.375rem", fontSize: "0.75rem" }}>
+                        <span className="feature-note" style={{ color: f.yes ? "var(--color-indigo-400)" : "var(--color-slate-500)", fontSize: "0.75rem" }}>
                           ({f.note})
                         </span>
                       )}

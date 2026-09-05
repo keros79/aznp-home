@@ -111,9 +111,9 @@ export default function HowItWorks() {
                 >
                   {tier.icon}
                 </span>
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: "1rem", color: tier.color }}>{tier.name}</div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--color-slate-400)" }}>{tier.subtitle}</div>
+                  <div className="nowrap-scroll" style={{ fontSize: "0.8rem", color: "var(--color-slate-400)" }}>{tier.subtitle}</div>
                 </div>
               </div>
 
@@ -161,8 +161,8 @@ export default function HowItWorks() {
           <h3 style={{ fontWeight: 700, fontSize: "1.125rem", marginBottom: "1.25rem", color: "var(--color-slate-50)" }}>
             {t.cacheTitle}
           </h3>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+          <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <table style={{ width: "100%", minWidth: "480px", borderCollapse: "collapse", fontSize: "0.9rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
                   {[t.tableLayer, t.tableTtl, t.tableRole, t.tableSpeed].map((h) => (

@@ -73,11 +73,11 @@ export default function BotDemo() {
         </div>
 
         <div
-          className="glass-card"
+          className="glass-card demo-card-mobile"
           style={{ maxWidth: "860px", margin: "0 auto", padding: "2.25rem" }}
         >
           {/* 예시 URL */}
-          <div style={{ marginBottom: "1.25rem", display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+          <div className="chip-row" style={{ marginBottom: "1.25rem", gap: "0.5rem" }}>
             <span style={{ fontSize: "0.8rem", color: "var(--color-slate-400)", marginRight: "0.25rem" }}>{t.exampleLabel}</span>
             {EXAMPLE_URLS.map((url) => (
               <button
@@ -200,10 +200,9 @@ export default function BotDemo() {
             <div style={{ marginTop: "1.75rem" }}>
               {/* 응답 헤더 뱃지 */}
               <div
+                className="chip-row"
                 style={{
-                  display: "flex",
                   gap: "0.625rem",
-                  flexWrap: "wrap",
                   marginBottom: "1rem",
                 }}
               >
