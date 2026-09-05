@@ -127,6 +127,7 @@ export default function HowItWorks() {
                   fontWeight: 600,
                   padding: "0.2rem 0.625rem",
                   borderRadius: "9999px",
+                  whiteSpace: "nowrap",
                   background: tier.bg,
                   color: tier.color,
                   border: `1px solid ${tier.border}`,
@@ -200,6 +201,7 @@ export default function HowItWorks() {
                           fontSize: "0.75rem",
                           padding: "0.15rem 0.625rem",
                           borderRadius: "9999px",
+                          whiteSpace: "nowrap",
                           background: i === 0 ? "rgba(34,211,238,0.1)" : i === 1 ? "rgba(99,102,241,0.1)" : "rgba(100,116,139,0.1)",
                           color: i === 0 ? "var(--color-cyan-400)" : i === 1 ? "var(--color-indigo-400)" : "var(--color-slate-400)",
                         }}

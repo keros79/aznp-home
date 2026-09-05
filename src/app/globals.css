@@ -179,6 +179,13 @@ body {
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 500;
+  /*
+   * 알약 라벨은 안에서 줄바꿈되지 않는다.
+   * 한글은 기본값(word-break: normal)에서도 음절 단위로 끊겨
+   * "초고 / 속" 처럼 갈라지므로 nowrap 을 명시한다.
+   * 넘칠 때는 칩이 아니라 바깥 .chip-row / 표 래퍼가 가로 스크롤한다.
+   */
+  white-space: nowrap;
 }
 .badge-indigo {
   background: rgba(99, 102, 241, 0.15);
@@ -209,6 +216,13 @@ body {
   gap: 0.5rem;
   flex-wrap: wrap;
   min-width: 0;
+}
+/*
+ * flex-wrap 은 줄(flex line)만 제어하고 칩 안쪽 텍스트 줄바꿈은 못 막는다.
+ * 칩 하나가 "Cache: / HIT" 처럼 갈라지지 않도록 자식에 nowrap 을 건다.
+ */
+.chip-row > * {
+  white-space: nowrap;
 }
 
 /*

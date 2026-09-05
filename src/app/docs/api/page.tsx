@@ -222,6 +222,7 @@ async function fetchWithAutoTopup(targetUrl) {
                       fontSize: "0.75rem",
                       padding: "0.15rem 0.5rem",
                       borderRadius: "9999px",
+                      whiteSpace: "nowrap",
                       background: p.required ? "rgba(239,68,68,0.1)" : "rgba(100,116,139,0.1)",
                       color: p.required ? "#f87171" : "var(--color-slate-500)",
                     }}>
