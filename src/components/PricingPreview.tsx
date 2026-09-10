@@ -18,12 +18,15 @@ export default function PricingPreview() {
       bg: "rgba(100,116,139,0.06)",
       border: "rgba(100,116,139,0.2)",
       featured: false,
+      outOfScope: false,
       features: [
         "Tier 1 Cloudflare Native ✅",
         "Tier 2 Self Conversion ✅",
+        "Markdown / JSON / TOML / YAML / JSON-LD ✅",
+        "max_tokens (token budget) ✅",
         "15 RPM / 1,000 RPD Limit",
         "Cache API 1h TTL",
-        "No Signups / Logins",
+        "No Signups / API Keys",
       ],
       cta: { label: t.ctaDocs, href: "/docs" },
     },
@@ -36,12 +39,11 @@ export default function PricingPreview() {
       bg: "rgba(99,102,241,0.08)",
       border: "rgba(99,102,241,0.4)",
       featured: true,
+      outOfScope: true,
       features: [
         "Tier 1 + 2 + 3 (JS Rendering) ✅",
         "Advanced Extraction (+15~30% Savings)",
         "OpenAPI / Swagger 90% Compression ✅",
-        "Summary mode & max_tokens",
-        "Structured JSON Output",
         "Solana Ed25519 Stateless Auth",
         "POST /v1/topup Instant Deposit",
       ],
@@ -56,11 +58,11 @@ export default function PricingPreview() {
       bg: "rgba(168,85,247,0.06)",
       border: "rgba(168,85,247,0.25)",
       featured: false,
+      outOfScope: true,
       features: [
         "All Pro Agent Features (JS Rendering, OpenAPI/Swagger 90% Compression) ✅",
         "Scale Agent Workloads",
         "Lowest Per-Req Unit Cost ($0.00125)",
-        "Solana Ed25519 Stateless Auth",
         "Priority Execution Queue",
         "POST /v1/topup Instant Deposit",
       ],
@@ -131,6 +133,23 @@ export default function PricingPreview() {
                 <div className="nowrap-scroll" style={{ fontSize: "0.75rem", color: "var(--color-slate-400)", marginBottom: "0.75rem" }}>
                   {plan.badge}
                 </div>
+                {plan.outOfScope && (
+                  <div
+                    style={{
+                      marginBottom: "0.75rem",
+                      fontSize: "0.7rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.02em",
+                      color: "var(--color-slate-500)",
+                      border: "1px dashed rgba(100,116,139,0.3)",
+                      borderRadius: "0.5rem",
+                      padding: "0.4rem 0.625rem",
+                      textAlign: "center",
+                    }}
+                  >
+                    {t.outOfScope}
+                  </div>
+                )}
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.25rem" }}>
                   <span style={{ fontSize: "2.25rem", fontWeight: 800, color: "var(--color-slate-50)", letterSpacing: "-0.04em" }}>
                     {plan.price}
@@ -147,6 +166,24 @@ export default function PricingPreview() {
                   </li>
                 ))}
               </ul>
+
+              {plan.outOfScope && (
+                <div
+                  style={{
+                    marginBottom: "1.5rem",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.02em",
+                    color: "var(--color-slate-500)",
+                    border: "1px dashed rgba(100,116,139,0.3)",
+                    borderRadius: "0.5rem",
+                    padding: "0.5rem 0.75rem",
+                    textAlign: "center",
+                  }}
+                >
+                  {t.outOfScope}
+                </div>
+              )}
 
               <Link
                 href={plan.cta.href}

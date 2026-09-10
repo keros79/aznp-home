@@ -15,9 +15,9 @@ export default function Nav() {
 
   const navLinks = [
     { href: "/", label: t.home },
-    { href: "/pricing", label: t.pricing },
     { href: "/docs", label: t.docs },
     { href: "/docs/api", label: t.api },
+    { href: "/pricing", label: t.pricing },
     { href: "/about", label: t.about },
   ];
 

@@ -32,16 +32,20 @@ export const metadata: Metadata = {
     template: "%s | AZNP",
   },
   description:
-    "AI 에이전트를 위한 초경량 Markdown 프록시. 웹페이지의 노이즈를 제거하고 75~90% 토큰을 절감하세요.",
+    "Free public web-to-Markdown converter for AI agents. Convert any URL to clean Markdown — no API key, wallet, or signup. Optional Solana Ed25519 signing is identity, not billing.",
   keywords: [
     "AZNP",
     "Agentic Zero-Noise Proxy",
     "AI proxy",
     "Markdown proxy",
+    "free markdown converter",
     "token reduction",
     "Cloudflare Workers",
     "LLM",
     "AI agent",
+    "Solana",
+    "Solana identity",
+    "Ed25519",
   ],
   openGraph: {
     type: "website",
@@ -50,7 +54,7 @@ export const metadata: Metadata = {
     siteName: "AZNP",
     title: "AZNP – Agentic Zero-Noise Proxy",
     description:
-      "AI 에이전트를 위한 초경량 Markdown 프록시. 평균 75~90% 토큰 절감, 전 세계 Cloudflare Edge 서빙.",
+      "Free public web-to-Markdown converter for AI agents. No API key or wallet needed. Optional Solana Ed25519 signing is identity, not billing.",
     images: [
       {
         url: "/og-image.png",
@@ -63,7 +67,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AZNP – Agentic Zero-Noise Proxy",
-    description: "AI 에이전트를 위한 초경량 Markdown 프록시. 평균 75~90% 토큰 절감.",
+    description: "Free public web-to-Markdown converter for AI agents. No API key or wallet needed.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -77,7 +81,7 @@ const jsonLd = {
   "@type": "SoftwareApplication",
   name: "AZNP – Agentic Zero-Noise Proxy",
   description:
-    "AI 에이전트를 위한 초경량 Markdown 프록시 서비스. 웹페이지를 Markdown으로 변환하고 75~90%의 토큰을 절감합니다.",
+    "Free public web-to-Markdown converter for AI agents. Convert any URL to clean Markdown without an API key, wallet, or signup.",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",
   offers: [

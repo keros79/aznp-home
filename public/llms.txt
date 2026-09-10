@@ -1,32 +1,21 @@
-# AZNP - Agentic Zero-Noise Proxy
+﻿# AZNP
 
-> Ultra-lightweight Markdown proxy for AI Agents & LLMs with Solana Wallet-based Stateless Micropayments.
+Convert any URL to clean, token-efficient Markdown for AI agents and LLMs.
 
-AZNP strips HTML bloat, navigation, ads, scripts, and CSS from web pages, converting them into clean, high-density Markdown. It saves 75~90% LLM token costs on average. No signups, passwords, or API Key management required—your Solana Wallet (PublicKey) serves as your stateless account ID.
+- Free public good. No API key, wallet, or signup needed to convert.
+- GET /?url=<absolute http(s) URL>
+  - format: markdown (default) | json | toml | yaml | json-ld  (all free)
+  - max_tokens: truncate the output to a token budget (free)
+  - images=0: drop images from the output
+- GET /health        — service status
+- GET /openapi.json  — OpenAPI 3.0.3 specification
+- GET /llms-full.txt — full API reference (params, headers, error codes, examples)
 
-## Core Capabilities
-- Token Reduction: 75~90% average LLM token savings (up to 95% with Advanced Extraction)
-- OpenAPI Spec Compression: 80~90% token reduction for `openapi.json` / `swagger.json` (Pro Tier; Free Tier returns 307 Redirect to raw file)
-- File Bypass: PDF, images, video, and audio URLs return 307 Temporary Redirect to original URL
-- 3-Tier Cascading Engine: Cloudflare Native → Self Extraction → Tier 3 Browser Rendering (JS)
-- Multi-Tier Caching: Cache API + KV saving 70~90% CPU on repeated requests
-- Stateless Authentication: Solana Ed25519 wallet signatures (`x-wallet-address`, `x-signature`, `x-timestamp`)
+Optional Solana Ed25519 request signing (identity, not billing):
+  x-wallet-address: <Base58 Ed25519 public key>
+  x-timestamp:      <unix seconds>
+  x-signature:      <Base58 Ed25519 signature over "x402:{timestamp}">
 
-## Pricing & Deposit Options (USDC on Solana)
-- Free Tier: $0 / month (15 RPM / 1,000 RPD basic conversion, no auth needed)
-- Pro Agent: $20 USDC deposit = 12,000 request credits ($0.00166 / req)
-- Enterprise: $100 USDC deposit = 80,000 request credits ($0.00125 / req)
-
-## Credit Topup API
-- Topup Endpoint: `POST https://aznp-proxy.kerberos79.workers.dev/v1/topup` (Body: `{"wallet": "<SOL_PUBLIC_KEY>", "tx_hash": "<SOL_TX_HASH>"}`)
-
-## API Endpoints
-- Primary Conversion: `GET https://aznp-proxy.kerberos79.workers.dev/?url={target_url}`
-- Parameters: `url` (required), `mode` (auto | summary), `max_tokens` (number), `render` (true | false), `format` (markdown | json)
-- Signature Headers: `x-wallet-address`, `x-timestamp`, `x-signature`
-
-## Machine-Readable Specifications
-- Full Documentation: https://aznp-home.pages.dev/llms-full.txt
-- OpenAPI 3.0 Specification: https://aznp-home.pages.dev/openapi.json
-- API Reference: https://aznp-home.pages.dev/docs/api
-- Pricing Details: https://aznp-home.pages.dev/pricing
+Planned: @aznp/mcp-server (stdio + remote MCP endpoint) wrapping this Worker.
+Paid Pro credits (POST /v1/topup with USDC) and the Base (EVM) chain are kept
+for compatibility but are NOT part of the grant product.

@@ -18,7 +18,7 @@ export default function Footer() {
     [t.catResources]: [
       { label: "Cloudflare Workers", href: "https://workers.cloudflare.com", external: true },
       { label: "Markdown for Agents", href: "https://blog.cloudflare.com/markdown-for-agents/", external: true },
-      { label: "GitHub", href: "https://github.com", external: true },
+      { label: "GitHub (aznp-worker)", href: "https://github.com/keros79/aznp-worker", external: true },
     ],
     [t.catLegal]: [
       { label: t.terms, href: "/terms" },

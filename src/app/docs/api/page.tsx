@@ -9,19 +9,19 @@ export default function ApiReferencePage() {
   const t = dictionaries[lang].docsApi;
 
   const queryParams = [
-    { name: "url", required: true, plan: "Free/USDC", desc: lang === "en" ? "Target web page URL (Required)" : "대상 웹페이지 URL (필수)" },
-    { name: "mode", required: false, plan: "auto: Free, summary: USDC", desc: lang === "en" ? "auto (default) / summary (Summary mode)" : "auto (기본) / summary (요약 모드)" },
-    { name: "max_tokens", required: false, plan: "USDC", desc: lang === "en" ? "Max tokens limit for return Markdown" : "반환 Markdown 최대 토큰 수" },
-    { name: "render", required: false, plan: "USDC", desc: lang === "en" ? "true → Force dynamic JS rendering (Tier 3)" : "true → JS 렌더링 강제 (Tier 3 Browser Rendering)" },
-    { name: "format", required: false, plan: "markdown / json", desc: lang === "en" ? "markdown (default) / json (Structured JSON)" : "markdown (기본) / json (구조화 JSON)" },
-    { name: "fresh", required: false, plan: "Free/USDC", desc: lang === "en" ? "1 → Bypass cache & force refresh" : "1 → 캐시 무시하고 강제 갱신" },
-    { name: "images", required: false, plan: "Free/USDC", desc: lang === "en" ? "0 → Minimize image text bloat" : "0 → 이미지 관련 텍스트 최소화" },
+    { name: "url", required: true, plan: lang === "en" ? "Required" : "필수", desc: lang === "en" ? "Target web page URL (Required)" : "대상 웹페이지 URL (필수)" },
+    { name: "mode", required: false, plan: "Free / Pro", desc: lang === "en" ? "auto (default) / summary (summary mode, Pro — out of grant scope)" : "auto (기본) / summary (요약 모드, Pro — 그랜트 범위 밖)" },
+    { name: "max_tokens", required: false, plan: "Free", desc: lang === "en" ? "Truncate the output to N tokens (free)" : "출력을 N 토큰 이내로 절단 (무료)" },
+    { name: "render", required: false, plan: "Pro", desc: lang === "en" ? "true → force dynamic JS rendering (Tier 3, Pro — out of grant scope)" : "true → 동적 JS 렌더링 강제 (Tier 3, Pro — 그랜트 범위 밖)" },
+    { name: "format", required: false, plan: "Free", desc: lang === "en" ? "markdown (default) | json | toml | yaml | json-ld — all free" : "markdown (기본) | json | toml | yaml | json-ld — 전부 무료" },
+    { name: "fresh", required: false, plan: "Free", desc: lang === "en" ? "1 → bypass cache & force refresh" : "1 → 캐시 무시하고 강제 갱신" },
+    { name: "images", required: false, plan: "Free", desc: lang === "en" ? "0 → drop images from the output" : "0 → 출력에서 이미지 제거" },
   ];
 
   const authHeaders = [
-    { name: "x-wallet-address", required: true, desc: lang === "en" ? "Solana Public Key (Base58 format)" : "Solana Public Key (Base58 포맷)" },
-    { name: "x-timestamp", required: true, desc: lang === "en" ? "Unix Timestamp (Seconds, within 5 mins)" : "Unix Timestamp (초 단위, 현재 시간 5분 이내)" },
-    { name: "x-signature", required: true, desc: lang === "en" ? "Ed25519 signature of 'x402:{timestamp}' (Base58)" : "x402:{timestamp} 메시지에 대한 Ed25519 서명 (Base58 포맷)" },
+    { name: "x-wallet-address", required: false, desc: lang === "en" ? "Solana Public Key (Base58 format) — optional identity" : "Solana Public Key (Base58 포맷) — 선택 신원" },
+    { name: "x-timestamp", required: false, desc: lang === "en" ? "Unix Timestamp (Seconds, within 5 mins) — optional identity" : "Unix Timestamp (초 단위, 현재 시간 5분 이내) — 선택 신원" },
+    { name: "x-signature", required: false, desc: lang === "en" ? "Ed25519 signature of 'x402:{timestamp}' (Base58) — optional identity" : "x402:{timestamp} 메시지에 대한 Ed25519 서명 (Base58) — 선택 신원" },
   ];
 
   const responseHeaders = [
@@ -171,6 +171,9 @@ async function fetchWithAutoTopup(targetUrl) {
           {t.topupTitle}
         </h2>
         <div className="glass-card" style={{ padding: "1.5rem", marginBottom: "1rem" }}>
+          <div style={{ fontSize: "0.8125rem", color: "var(--color-slate-400)", marginBottom: "0.75rem", border: "1px dashed rgba(100,116,139,0.3)", borderRadius: "0.5rem", padding: "0.5rem 0.75rem" }}>
+            {t.topupScope}
+          </div>
           <div style={{ fontSize: "0.875rem", color: "var(--color-slate-300)", marginBottom: "0.75rem" }}>
             {t.topupSub}
           </div>
@@ -272,6 +275,49 @@ async function fetchWithAutoTopup(targetUrl) {
         </h2>
         <div className="code-block" style={{ whiteSpace: "pre-wrap", fontFamily: "var(--font-mono)", fontSize: "0.85rem", lineHeight: 1.7 }}>
           {walletAndAutoTopupExample}
+        </div>
+      </section>
+
+      {/* 에러 코드 */}
+      <section style={{ marginBottom: "2.5rem" }}>
+        <h2 style={{ fontSize: "1.375rem", fontWeight: 700, marginBottom: "1rem", color: "var(--color-slate-50)" }}>
+          {t.errorCodesTitle}
+        </h2>
+        <p style={{ fontSize: "0.875rem", color: "var(--color-slate-400)", marginBottom: "1rem", lineHeight: 1.7 }}>
+          {lang === "en"
+            ? "Errors are returned as TOML with an [error] table (code + action_recommendation) by default, and as JSON when format=json is used."
+            : "에러는 기본적으로 TOML [error] 블록(code + action_recommendation)으로 반환되며, format=json 이면 JSON으로 반환됩니다."}
+        </p>
+        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          <table style={{ width: "100%", minWidth: "540px", borderCollapse: "collapse", fontSize: "0.875rem" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
+                <th style={{ textAlign: "left", padding: "0.75rem 1rem", color: "var(--color-slate-400)", fontWeight: 500, fontSize: "0.8125rem" }}>{lang === "en" ? "Status" : "상태"}</th>
+                <th style={{ textAlign: "left", padding: "0.75rem 1rem", color: "var(--color-slate-400)", fontWeight: 500, fontSize: "0.8125rem" }}>code</th>
+                <th style={{ textAlign: "left", padding: "0.75rem 1rem", color: "var(--color-slate-400)", fontWeight: 500, fontSize: "0.8125rem" }}>action_recommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { status: "400", code: "missing_url / invalid_url / unsupported_format / max_tokens_too_large / chain_mismatch", action: "fix the parameter" },
+                { status: "404", code: "not_found", action: "use GET /?url=... or the endpoints above" },
+                { status: "429", code: "rate_limited", action: "wait Retry-After seconds" },
+                { status: "502", code: "fetch_failed", action: "check URL reachability and retry" },
+                { status: "500", code: "internal_error", action: "retry a limited number of times" },
+              ].map((row, i) => (
+                <tr key={row.status} style={{ borderBottom: i < 4 ? "1px solid rgba(99,102,241,0.1)" : "none" }}>
+                  <td style={{ padding: "0.75rem 1rem", color: "var(--color-indigo-400)", fontFamily: "var(--font-mono)", fontSize: "0.875em" }}>{row.status}</td>
+                  <td style={{ padding: "0.75rem 1rem", color: "var(--color-slate-300)", fontFamily: "var(--font-mono)", fontSize: "0.8125rem" }}>{row.code}</td>
+                  <td style={{ padding: "0.75rem 1rem", color: "var(--color-slate-300)" }}>{row.action}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="glass-card" style={{ padding: "1rem", marginTop: "1rem", fontSize: "0.875rem", color: "var(--color-slate-400)", lineHeight: 1.7 }}>
+          {lang === "en"
+            ? "HTTP 402 is only returned by the out-of-grant-scope credit system (POST /v1/topup) when credits are exhausted. Its body and PAYMENT-REQUIRED header remain JSON."
+            : "HTTP 402는 그랜트 범위 밖의 크레딧 시스템(POST /v1/topup)에서 크레딧이 소진됐을 때만 반환됩니다. 바디와 PAYMENT-REQUIRED 헤더는 JSON 형태가 유지됩니다."}
         </div>
       </section>
     </article>

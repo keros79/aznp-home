@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useI18nStore } from "@/store/i18nStore";
@@ -17,7 +17,7 @@ export default function Hero() {
         overflow: "hidden",
       }}
     >
-      {/* 배경 그리드 */}
+      {/* 諛곌꼍 洹몃━??*/}
       <div
         className="bg-grid"
         style={{
@@ -28,7 +28,7 @@ export default function Hero() {
         }}
       />
 
-      {/* 배경 글로우 */}
+      {/* 諛곌꼍 湲濡쒖슦 */}
       <div
         style={{
           position: "absolute",
@@ -45,7 +45,7 @@ export default function Hero() {
       />
 
       <div className="section-wrapper" style={{ position: "relative", textAlign: "center" }}>
-        {/* 배지 */}
+        {/* 諛곗? */}
         <div style={{ marginBottom: "1.5rem" }}>
           <span className="badge badge-indigo">
             <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--color-indigo-400)", display: "inline-block" }} />
@@ -53,7 +53,7 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* 헤드라인 */}
+        {/* ?ㅻ뱶?쇱씤 */}
         <h1
           className="section-title animate-fade-in-up"
           style={{
@@ -68,7 +68,7 @@ export default function Hero() {
           <span className="text-gradient">{t.titleLine2}</span>
         </h1>
 
-        {/* 서브헤드라인 */}
+        {/* ?쒕툕?ㅻ뱶?쇱씤 */}
         <p
           className="section-subtitle animate-fade-in-up"
           style={{
@@ -82,7 +82,7 @@ export default function Hero() {
           <strong style={{ color: "var(--color-cyan-400)" }}>{t.subtitleHighlight}</strong>
         </p>
 
-        {/* CTA 버튼 */}
+        {/* CTA 踰꾪듉 */}
         <div
           className="animate-fade-in-up"
           style={{
@@ -95,7 +95,7 @@ export default function Hero() {
             animationFillMode: "forwards",
           }}
         >
-          <Link href="/pricing" className="btn-primary">
+          <Link href="/docs" className="btn-primary">
             {t.getStarted}
           </Link>
           <Link href="/docs/api" className="btn-outline">
@@ -103,7 +103,7 @@ export default function Hero() {
           </Link>
         </div>
 
-        {/* 코드 예시 */}
+        {/* 肄붾뱶 ?덉떆 */}
         <div
           className="glass-card animate-fade-in-up"
           style={{
@@ -138,14 +138,17 @@ export default function Hero() {
           >
             <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentFree}</span>{"\n"}
             <span style={{ color: "var(--color-cyan-400)" }}>curl</span> <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://news.ycombinator.com&quot;</span>{"\n\n"}
-            <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentPaid}</span>{"\n"}
-            <span style={{ color: "var(--color-cyan-400)" }}>curl</span> -H <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-wallet-address: 7xKX...SolanaPublicKey&quot;</span>{" \\\n  "}
-            -H <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-signature: 5K...Ed25519Signature&quot;</span>{" \\\n  "}
-            <span style={{ color: "var(--color-purple-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;mode=summary&quot;</span>
+            <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentJson}</span>{"\n"}
+            <span style={{ color: "var(--color-cyan-400)" }}>curl</span> <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;format=json&quot;</span>{"\n\n"}
+            <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentMaxTokens}</span>{"\n"}
+            <span style={{ color: "var(--color-cyan-400)" }}>curl</span> <span style={{ color: "var(--color-indigo-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;max_tokens=2000&quot;</span>{"\n\n"}
+            <span style={{ color: "var(--color-slate-500)" }}>{t.terminalCommentIdentity}</span>{"\n"}
+<span style={{ color: "var(--color-cyan-400)" }}>curl</span> -H <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-wallet-address: 7xKX...SolanaPublicKey&quot;</span> -H <span style={{ color: "var(--color-indigo-400)" }}>&quot;x-signature: 5K...Ed25519Signature&quot;</span>{"\n  "}
+            <span style={{ color: "var(--color-purple-400)" }}>&quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&quot;</span>
           </pre>
         </div>
 
-        {/* 통계 */}
+        {/* ?듦퀎 */}
         <div
           className="animate-fade-in-up"
           style={{

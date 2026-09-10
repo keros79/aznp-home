@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useDemoStore } from "@/store/demoStore";
 import { convertUrl } from "@/lib/aznpClient";
@@ -23,8 +22,6 @@ const sourceLabels: Record<string, string> = {
 
 export default function BotDemo() {
   const { inputUrl, setInputUrl, result, setResult, setError, error } = useDemoStore();
-  const [showWallet, setShowWallet] = useState(false);
-  const [walletAddr, setWalletAddr] = useState("");
   const { lang } = useI18nStore();
   const t = dictionaries[lang].demo;
 
@@ -32,7 +29,6 @@ export default function BotDemo() {
     mutationFn: () =>
       convertUrl({
         url: inputUrl,
-        apiKey: walletAddr || undefined,
       }),
     onSuccess: (data) => {
       setResult(data);
@@ -144,39 +140,7 @@ export default function BotDemo() {
               </button>
             </div>
 
-            {/* Solana Wallet 토글 */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowWallet(!showWallet)}
-                style={{
-                  fontSize: "0.8rem",
-                  color: "var(--color-slate-400)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.375rem",
-                }}
-              >
-                <span>{showWallet ? "▼" : "▶"}</span>
-                {t.solanaWalletToggle}
-              </button>
-              {showWallet && (
-                <input
-                  id="demo-wallet-input"
-                  type="text"
-                  className="input-field"
-                  placeholder={t.walletPlaceholder}
-                  value={walletAddr}
-                  onChange={(e) => setWalletAddr(e.target.value)}
-                  style={{ marginTop: "0.5rem" }}
-                />
-              )}
-            </div>
-          </form>
+            </form>
 
           {/* 에러 */}
           {error && (

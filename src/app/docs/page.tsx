@@ -37,6 +37,20 @@ export default function DocsPage() {
               &quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://news.ycombinator.com&quot;
             </span>
           </div>
+          <div style={{ color: "var(--color-slate-500)", marginTop: "1rem", marginBottom: "0.5rem" }}># Structured JSON (free)</div>
+          <div>
+            <span style={{ color: "var(--color-cyan-400)" }}>curl</span>{" "}
+            <span style={{ color: "var(--color-indigo-400)" }}>
+              &quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;format=json&quot;
+            </span>
+          </div>
+          <div style={{ color: "var(--color-slate-500)", marginTop: "1rem", marginBottom: "0.5rem" }}># Token budget max_tokens=2000 (free)</div>
+          <div>
+            <span style={{ color: "var(--color-cyan-400)" }}>curl</span>{" "}
+            <span style={{ color: "var(--color-indigo-400)" }}>
+              &quot;https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&amp;max_tokens=2000&quot;
+            </span>
+          </div>
         </div>
       </section>
 
@@ -48,6 +62,19 @@ export default function DocsPage() {
         <p style={{ fontSize: "0.9375rem", color: "var(--color-slate-400)", marginBottom: "1rem", lineHeight: 1.7 }}>
           {t.solanaSub}
         </p>
+        <div
+          style={{
+            marginBottom: "1rem",
+            padding: "0.75rem 1rem",
+            borderRadius: "0.5rem",
+            border: "1px dashed rgba(100,116,139,0.3)",
+            color: "var(--color-slate-400)",
+            fontSize: "0.875rem",
+            lineHeight: 1.7,
+          }}
+        >
+          {t.outOfScopeNote}
+        </div>
         <div className="glass-card" style={{ padding: "1.5rem" }}>
           <ol style={{ paddingLeft: "1.25rem", margin: 0, color: "var(--color-slate-300)", fontSize: "0.9rem", lineHeight: 1.8 }}>
             <li><strong>{t.step1}</strong></li>
@@ -124,6 +151,23 @@ export default function DocsPage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* MCP 예정 */}
+      <section style={{ marginBottom: "2.5rem" }}>
+        <div
+          className="glass-card"
+          style={{
+            padding: "1.25rem",
+            border: "1px solid rgba(34,211,238,0.2)",
+            background: "rgba(34,211,238,0.04)",
+            fontSize: "0.9rem",
+            color: "var(--color-slate-300)",
+            lineHeight: 1.7,
+          }}
+        >
+          {t.mcpLine}
         </div>
       </section>
 

@@ -8,7 +8,7 @@ import BotDemo from "@/components/BotDemo";
 export const metadata: Metadata = {
   title: "AZNP – Agentic Zero-Noise Proxy",
   description:
-    "AI 에이전트를 위한 초경량 Markdown 프록시. 웹페이지의 노이즈를 제거하고 75~90% 토큰을 절감하세요. Cloudflare Edge 서빙.",
+    "Free public web-to-Markdown converter for AI agents. Convert any URL to clean Markdown with 75~90% token savings — no API key, wallet, or signup. Optional Solana Ed25519 signing is identity, not billing.",
 };
 
 export default function HomePage() {

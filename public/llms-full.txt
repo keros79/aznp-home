@@ -1,163 +1,73 @@
-# AZNP (Agentic Zero-Noise Proxy) Full Specification for AI Agents
+﻿# AZNP — Full API Reference
 
-> Complete machine-readable API reference, authentication specifications, payment details, and integration code for autonomous LLM Agents.
+AZNP converts any URL to clean, token-efficient Markdown for AI agents.
 
----
+## Endpoints
 
-## 1. Executive Summary
+- GET /?url=<target>   Convert a URL (free, no auth required)
+- GET /health          Service status (JSON)
+- GET /llms.txt        Short guide for AI agents (project summary)
+- GET /llms-full.txt   This full reference
+- GET /openapi.json    OpenAPI 3.0.3 spec of GET / and GET /health
+- GET /robots.txt      Crawler allow rules
+- POST /v1/topup       (out of grant scope) USDC credit top-up, kept for compatibility
 
-AZNP is an edge proxy designed explicitly for LLMs, AI Autonomous Agents, and RAG pipelines. When agents fetch web pages for research or context retrieval, raw HTML contains up to 90% bloat (ads, navigation, footers, scripts, tracking pixels). AZNP converts web pages into high-density, clean Markdown, saving 75~90% in LLM token consumption.
+## Query parameters (GET /)
 
-AZNP operates on a **Stateless, No-Key Architecture**. There are no accounts, passwords, or stored API keys to manage or leak. Authentication is performed via Solana Ed25519 digital signatures.
+| Parameter  | Default   | Description                                    |
+|------------|-----------|------------------------------------------------|
+| url        | (required)| Target http(s) URL                            |
+| format     | markdown  | markdown | json | toml | yaml | json-ld       |
+| max_tokens | 0         | Truncate to N tokens (est. ceil(chars/4))      |
+| mode       | auto      | auto (summary is Pro-only)                     |
+| render     | false     | true = force JS render (Pro-only)              |
+| images     | 1         | 0 = drop images                                |
+| fresh      | 0         | 1 = bypass cache                               |
 
-### Special Handling Rules
-- **OpenAPI / Swagger Specs (`openapi.json`, `swagger.json`, `.yaml`)**: Pro Tier requests receive 80~90% compressed, high-density JSON. Free Tier requests receive a 307 Temporary Redirect to the original raw spec file.
-- **Files & Binary Media (PDF, Images, Video, Audio, Archives)**: Automatically return 307 Temporary Redirect (`X-AZNP-Bypass: true`) to original URL without consuming Worker memory.
+All formats and max_tokens are FREE for anonymous requests.
 
----
+## Response headers
 
-## 2. API Endpoints
+- X-AZNP-Plan: free | pro
+- X-AZNP-Source: cloudflare-native | aznp-self | browser-rendering | kv | cache-api
+- X-AZNP-Cache: HIT | MISS
+- X-Markdown-Tokens / X-Original-Tokens / X-Token-Reduction
+- X-RateLimit-Remaining / X-RateLimit-Reset
 
-### 2.1 Web Page to Markdown Conversion (`GET /`)
-Base URL: `https://aznp-proxy.kerberos79.workers.dev/`
+## Error codes (TOML [error] by default; JSON when format=json)
 
-#### Query Parameters
-- `url` (string, required): The target web URL to fetch and convert (e.g. `https://example.com/article`).
-- `mode` (string, optional): `auto` (default) for standard extraction, or `summary` for AI-condensed key takeaway extraction.
-- `max_tokens` (number, optional): Maximum token budget for the returned Markdown content.
-- `render` (boolean, optional): Set `true` to force Tier 3 Browser Rendering for dynamic JavaScript single-page apps.
-- `format` (string, optional): `markdown` (default) or `json` for structured payload including metadata.
-- `fresh` (number, optional): Set `1` to bypass edge cache and force fresh web fetching.
-- `images` (number, optional): Set `0` to strip image references and alt texts to further reduce tokens.
+| Status | code                    | action_recommendation                       |
+|--------|-------------------------|---------------------------------------------|
+| 400    | missing_url / invalid_url / unsupported_format / max_tokens_too_large / chain_mismatch | fix the parameter |
+| 404    | not_found               | use GET /?url=... or the endpoints above    |
+| 429    | rate_limited            | wait Retry-After seconds                    |
+| 502    | fetch_failed            | check URL reachability and retry            |
+| 500    | internal_error          | retry a limited number of times             |
 
-#### Authentication Headers (Required for Tier 3 / Summary / Paid Requests)
-- `x-wallet-address`: Solana Public Key (Base58 encoded)
-- `x-timestamp`: Unix timestamp in seconds (must be within 5 minutes of current server time)
-- `x-signature`: Base58 Ed25519 signature of the message string `x402:{timestamp}`
+## Solana Ed25519 signature (optional, identity not billing)
 
----
+Sign the message "x402:{timestamp}" (timestamp = unix seconds) with your Solana
+keypair and send the headers below. Signed requests get rate-limit uplift.
 
-### 2.2 Credit Top-Up Endpoint (`POST /v1/topup`)
-Base URL: `https://aznp-proxy.kerberos79.workers.dev/v1/topup`
-
-Submit a Solana transaction hash after transferring USDC to top up request credits for your wallet address.
-
-#### Request Body (JSON)
-```json
-{
-  "wallet": "7xKX...SolanaPublicKeyBase58",
-  "tx_hash": "5K...SolanaTransactionHashBase58"
-}
+```
+x-wallet-address: <Base58 public key>
+x-timestamp:      <unix seconds>
+x-signature:      <Base58 Ed25519 detached signature>
 ```
 
-#### Response Body (200 OK)
-```json
-{
-  "success": true,
-  "wallet": "7xKX...SolanaPublicKeyBase58",
-  "deposited_usdc": 20.0,
-  "added_credits": 12000,
-  "total_allowed_requests": 12000
-}
-```
+## Examples
 
----
+curl:
+  curl "https://aznp-proxy.kerberos79.workers.dev/?url=https://news.ycombinator.com&format=json"
 
-## 3. Pricing & Rates (Solana USDC)
-
-AZNP uses a prepaid credit balance linked directly to your Solana Wallet Address.
-
-| Tier | Deposit Amount | Credits (Requests) | Unit Price | Gas Ratio (0.7 USDC basis) | Token Savings Value |
-|------|----------------|-------------------|------------|---------------------------|----------------------|
-| **Free Tier** | **$0** | 15 RPM / 1,000 RPD | **$0** | N/A | Basic conversion |
-| **Pro Agent** | **$20 USDC** | **12,000 requests** | **$0.00166** (~2.1 KRW) | **3.5%** | ~$840 in LLM token value |
-| **Enterprise** | **$100 USDC** | **80,000 requests** | **$0.00125** (~1.6 KRW) | **0.7%** | ~$5,600 in LLM token value |
-
----
-
-## 4. Response Headers
-
-Every AZNP API response includes analytical and telemetry headers:
-
-- `X-AZNP-Plan`: Execution tier (`free`, `pro`, `enterprise`)
-- `X-AZNP-Source`: Conversion engine source (`cloudflare-native`, `aznp-self`, `browser-rendering`, `cache`, `kv`)
-- `X-AZNP-Cache`: Cache status (`HIT`, `MISS`)
-- `X-Token-Reduction`: Estimated token savings percentage (e.g. `84%`)
-- `X-Markdown-Tokens`: Estimated token count of the returned Markdown payload
-- `X-RateLimit-Remaining`: Remaining request credits for the wallet
-- `PAYMENT-REQUIRED`: Present when HTTP 402 is returned, specifying top-up status and pricing tiers
-
----
-
-## 5. Agent Code Example (Node.js / TypeScript)
-
-```javascript
-import nacl from 'tweetnacl';
-import bs58 from 'bs58';
-
-const AGENT_SOLANA_PRIVATE_KEY_BASE58 = "YOUR_AGENT_SOLANA_PRIVATE_KEY_BASE58";
-const secretKey = bs58.decode(AGENT_SOLANA_PRIVATE_KEY_BASE58);
-const keypair = nacl.sign.keyPair.fromSecretKey(secretKey);
-const publicKeyBase58 = bs58.encode(keypair.publicKey);
-
-async function fetchCleanMarkdown(targetUrl) {
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const messageBytes = new TextEncoder().encode(`x402:${timestamp}`);
-
-  // Create Ed25519 detached signature
-  const signatureBytes = nacl.sign.detached(messageBytes, keypair.secretKey);
-  const signatureBase58 = bs58.encode(signatureBytes);
-
-  const endpointUrl = `https://aznp-proxy.kerberos79.workers.dev/?url=${encodeURIComponent(targetUrl)}&render=true`;
-
-  const response = await fetch(endpointUrl, {
-    method: 'GET',
-    headers: {
-      'x-wallet-address': publicKeyBase58,
-      'x-timestamp': timestamp,
-      'x-signature': signatureBase58,
-    },
+Node.js:
+  const res = await fetch("https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&format=json", {
+    headers: { "Accept": "application/json" }
   });
+  const data = await res.json();
 
-  if (response.status === 402) {
-    const errorData = await response.json();
-    console.error("402 Payment Required: Insufficient credits. Top up needed.", errorData);
-    return null;
-  }
-
-  const markdown = await response.text();
-  console.log("Token reduction:", response.headers.get("X-Token-Reduction"));
-  return markdown;
-}
-```
-
----
-
-## 6. Programmatic Wallet Generation & HTTP 402 Auto-Topup Workflow
-
-AI Agents can operate completely autonomously by generating keypairs programmatically and auto-topping up USDC when HTTP 402 (Payment Required) is encountered.
-
-### 6.1 Keypair Generation (Node.js `@solana/web3.js`)
-```javascript
-import { Keypair } from '@solana/web3.js';
-import bs58 from 'bs58';
-
-const agentKeypair = Keypair.generate();
-console.log("Public Key:", agentKeypair.publicKey.toBase58());
-console.log("Secret Key (Base58):", bs58.encode(agentKeypair.secretKey));
-```
-
-### 6.2 HTTP 402 Auto-Topup Handler Pattern
-```javascript
-async function fetchWithAutoTopup(targetUrl) {
-  let response = await fetchCleanMarkdown(targetUrl);
-  if (response === null) { // 402 Insufficient credits
-    console.log("Executing auto-topup...");
-    // 1. Send $20 USDC transfer to AZNP recipient wallet via Solana Web3 SDK
-    // 2. Post tx_hash to https://aznp-proxy.kerberos79.workers.dev/v1/topup
-    // 3. Retry fetchCleanMarkdown(targetUrl)
-  }
-  return response;
-}
-```
-
+Python:
+  import urllib.request, json
+  url = "https://aznp-proxy.kerberos79.workers.dev/?url=https://example.com&format=json"
+  with urllib.request.urlopen(url) as r:
+      data = json.load(r)

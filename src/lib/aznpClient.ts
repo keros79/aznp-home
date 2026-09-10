@@ -6,7 +6,7 @@ export interface ConvertOptions {
   mode?: "auto" | "summary";
   maxTokens?: number;
   render?: boolean;
-  format?: "markdown" | "json";
+  format?: "markdown" | "json" | "toml" | "yaml" | "json-ld";
 }
 
 const AZNP_URL =
@@ -33,11 +33,14 @@ export async function convertUrl(options: ConvertOptions): Promise<AznpResult> {
 
   if (!res.ok) {
     let errMsg = `HTTP ${res.status}`;
+    const raw = await res.text();
     try {
-      const json = await res.json();
-      errMsg = json.error || errMsg;
+      const parsed = JSON.parse(raw);
+      if (parsed.error) errMsg = parsed.error;
     } catch {
-      // ignore
+      // Body may be a TOML [error] block; surface it as-is for debugging.
+      const trimmed = raw.trim();
+      if (trimmed && !trimmed.startsWith("<")) errMsg = `${errMsg} — ${trimmed}`;
     }
     throw new Error(errMsg);
   }

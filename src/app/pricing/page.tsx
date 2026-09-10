@@ -21,11 +21,11 @@ export default function PricingPage() {
       features: [
         { label: "Tier 1 Cloudflare Native", yes: true },
         { label: "Tier 2 Self Conversion", yes: true },
-        { label: "Tier 3 JS Rendering", yes: false, note: lang === "en" ? "USDC required" : "USDC 충전 필요" },
-        { label: "Advanced Extraction (+15~30%)", yes: false, note: lang === "en" ? "USDC required" : "USDC 충전 필요" },
-        { label: "Summary mode (mode=summary)", yes: false, note: lang === "en" ? "USDC required" : "USDC 충전 필요" },
-        { label: "max_tokens limits", yes: false, note: lang === "en" ? "USDC required" : "USDC 충전 필요" },
-        { label: "Structured JSON Output", yes: false, note: lang === "en" ? "USDC required" : "USDC 충전 필요" },
+        { label: "Tier 3 JS Rendering", yes: false, note: lang === "en" ? "Pro (out of grant scope)" : "Pro 전용 (그랜트 범위 밖)" },
+        { label: "Advanced Extraction (+15~30%)", yes: false, note: lang === "en" ? "Pro (out of grant scope)" : "Pro 전용 (그랜트 범위 밖)" },
+        { label: "Summary mode (mode=summary)", yes: false, note: lang === "en" ? "Pro (out of grant scope)" : "Pro 전용 (그랜트 범위 밖)" },
+        { label: "max_tokens (token budget)", yes: true, note: lang === "en" ? "Free" : "무료" },
+        { label: lang === "en" ? "Output formats (markdown / json / toml / yaml / json-ld)" : "출력 포맷 (markdown / json / toml / yaml / json-ld)", yes: true, note: lang === "en" ? "All Free" : "전부 무료" },
         { label: lang === "en" ? "OpenAPI / Swagger Spec Compression" : "OpenAPI/Swagger 스펙 압축", yes: false, note: lang === "en" ? "307 Redirect (Raw)" : "307 리다이렉트 (원본)" },
         { label: "Rate Limit", yes: true, note: "15 RPM / 1,000 RPD" },
         { label: "Cache API TTL", yes: true, note: "1 Hour" },
@@ -47,8 +47,6 @@ export default function PricingPage() {
         { label: "Tier 2 Advanced Extraction", yes: true },
         { label: "Tier 3 JS Rendering (Dynamic Web)", yes: true },
         { label: "Advanced Extraction (+15~30%)", yes: true },
-        { label: "Summary mode & max_tokens", yes: true },
-        { label: "Structured JSON Output", yes: true },
         { label: lang === "en" ? "OpenAPI / Swagger Spec 90% Compression" : "OpenAPI/Swagger 스펙 90% 압축", yes: true, note: "openapi/swagger.json" },
         { label: lang === "en" ? "Per-Request Cost" : "건당 단가", yes: true, note: "$0.00166 (~2.1 KRW)" },
         { label: lang === "en" ? "Gas Fee Ratio (0.7 USDC basis)" : "수수료 비중 (0.7 USDC 기준)", yes: true, note: "3.5%" },
@@ -97,6 +95,24 @@ export default function PricingPage() {
           <p className="section-subtitle">
             {t.subtitle}
           </p>
+        </div>
+
+        {/* 그랜드 제품 앞면 한 줄 */}
+        <div
+          style={{
+            maxWidth: "840px",
+            margin: "0 auto 3rem",
+            padding: "0.875rem 1.25rem",
+            borderRadius: "0.625rem",
+            border: "1px solid rgba(34,211,238,0.25)",
+            background: "rgba(34,211,238,0.06)",
+            color: "var(--color-cyan-300)",
+            fontSize: "0.875rem",
+            lineHeight: 1.7,
+            textAlign: "center",
+          }}
+        >
+          {t.grantBanner}
         </div>
 
         {/* 요금 카드 (3개 배치) */}
