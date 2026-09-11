@@ -124,7 +124,6 @@ export const dictionaries = {
       ctaDocs: "Get Started Free",
       ctaTopup: "Topup API Guide",
       ctaApi: "View API Reference",
-      outOfScope: "⚠️ Out of grant scope — kept for compatibility",
     },
     demo: {
       badge: "Live Demo",
@@ -334,7 +333,6 @@ export const dictionaries = {
       ctaDocs: "지금 시작하기",
       ctaTopup: "충전 API 가이드",
       ctaApi: "API 레퍼런스 보기",
-      outOfScope: "⚠️ 그랜트 범위 밖 — 호환성 유지를 위해 유지",
     },
     demo: {
       badge: "Live Demo",
